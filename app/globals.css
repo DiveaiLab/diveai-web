@@ -1,1 +1,59 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: "LINE Seed TW";
+  src: url("/fonts/LINESeedTW_OTF_Rg.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "LINE Seed TW";
+  src: url("/fonts/LINESeedTW_OTF_Bd.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "LINE Seed TW";
+  src: url("/fonts/LINESeedTW_OTF_Eb.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+:root {
+  --brand-primary: #6fc1cc;
+  --brand-secondary: #32738f;
+  --brand-dark: #0e0e2c;
+  --brand-light: #fafcfe;
+  --brand-highlight: #f8c0a0;
+  --brand-background: #e9f6ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.home-page {
+  min-height: 100svh;
+  overflow: hidden;
+  background: var(--brand-background);
+  color: var(--brand-dark);
+  font-family: "LINE Seed TW", sans-serif;
+}
