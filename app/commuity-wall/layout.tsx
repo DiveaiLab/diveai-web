@@ -1,33 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { WallStateProvider } from "./lib/wall-state-context";
 
 export const metadata: Metadata = {
-  title: "Diveai-web",
-  description: "Diveai-web",
+  title: "共學牆 | DiveAI - 把 AI，用在對的地方",
+  description:
+    "團隊策展的學習紀錄：每篇都附上「我原本的程度」與「花了多久」，記錄真實的卡關與解法。",
 };
 
-export default function RootLayout({
+export default function CommunityWallLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
-    </html>
-  );
+  return <WallStateProvider>{children}</WallStateProvider>;
 }
