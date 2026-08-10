@@ -3,6 +3,8 @@
 
 export type WallPostKind = "project" | "note" | "agent";
 
+// scene 欄位保留在資料結構裡（單篇頁還是會顯示情境標籤），
+// 但列表頁已不再用它做篩選，所以沒有對應的篩選用 SCENE_OPTIONS / isWallPostScene 了。
 export type WallPostScene = "課業" | "實習" | "職涯" | "日常";
 
 export type WallPostStatus = "draft" | "published";
@@ -22,6 +24,7 @@ export type WallPost = {
   authorAvatarUrl: string;
   likeCount: number;
   status: WallPostStatus;
+  createdAt: string; // 假日期字串（YYYY-MM-DD），用來排序「最新」文章
 };
 
 export const KIND_LABELS: Record<WallPostKind, string> = {
@@ -30,10 +33,76 @@ export const KIND_LABELS: Record<WallPostKind, string> = {
   agent: "Agent",
 };
 
-export const SCENE_OPTIONS: WallPostScene[] = ["課業", "實習", "職涯", "日常"];
+// 雜誌風格卡片用的摘要：直接從 bodyMd 擷取前 N 字，不另外新增摘要欄位。
+export function getExcerpt(text: string, maxLength = 45): string {
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength)}...`;
+}
 
-export function isWallPostScene(value: string): value is WallPostScene {
-  return (SCENE_OPTIONS as string[]).includes(value);
+// 依 createdAt 由新到舊排序後，取出某個 kind 底下所有已發布的文章。
+// 卡片牆的 carousel、三個分類總覽子頁面都共用這個函式。
+export function getPublishedPostsByKind(
+  posts: WallPost[],
+  kind: WallPostKind
+): WallPost[] {
+  return posts
+    .filter((post) => post.status === "published" && post.kind === kind)
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0));
+}
+
+// 留言／回饋假資料。之後會換成真實留言系統的資料表，目前只用來在
+// 「讀書會筆記」（kind = 'note'）單篇頁純展示，還不能真的送出新留言。
+export type Comment = {
+  id: string;
+  postId: string; // 對應哪篇文章（WallPost.id）
+  authorName: string;
+  content: string;
+  createdAt: string; // 先用假的日期字串即可
+};
+
+export const mockComments: Comment[] = [
+  {
+    id: "c1",
+    postId: "8",
+    authorName: "小凱",
+    content:
+      "聽完你分享的「畫圖追蹤呼叫堆疊」方法，我終於搞懂之前寫的遞迴函式為什麼會爆 stack，謝謝！",
+    createdAt: "2026-05-03",
+  },
+  {
+    id: "c2",
+    postId: "8",
+    authorName: "小雨",
+    content: "我原本也卡在遞迴的終止條件，看完這篇筆記後回去重寫，作業終於過了。",
+    createdAt: "2026-05-04",
+  },
+  {
+    id: "c3",
+    postId: "8",
+    authorName: "小婷",
+    content: "推薦大家搭配課本第五章一起看，這篇筆記把抽象的概念講得很具體。",
+    createdAt: "2026-05-05",
+  },
+  {
+    id: "c4",
+    postId: "9",
+    authorName: "阿仁",
+    content:
+      "這週聽完你分享 fine-tuning 跟 RAG 的比較表，解決了我專題一直在糾結要選哪個技術路線的問題。",
+    createdAt: "2026-07-02",
+  },
+  {
+    id: "c5",
+    postId: "9",
+    authorName: "小華",
+    content:
+      "之前做 agent 專題誤用 fine-tuning 處理原本該用 RAG 解的問題，看完筆記才發現方向錯了，週末來調整。",
+    createdAt: "2026-07-03",
+  },
+];
+
+export function getCommentsForPost(postId: string): Comment[] {
+  return mockComments.filter((comment) => comment.postId === postId);
 }
 
 export const mockWallPosts: WallPost[] = [
@@ -56,6 +125,7 @@ export const mockWallPosts: WallPost[] = [
     authorAvatarUrl: "https://i.pravatar.cc/64?img=1",
     likeCount: 12,
     status: "published",
+    createdAt: "2026-06-10",
   },
   {
     id: "2",
@@ -73,6 +143,7 @@ export const mockWallPosts: WallPost[] = [
     authorAvatarUrl: "https://i.pravatar.cc/64?img=5",
     likeCount: 20,
     status: "published",
+    createdAt: "2026-07-01",
   },
   {
     id: "3",
@@ -90,6 +161,7 @@ export const mockWallPosts: WallPost[] = [
     authorAvatarUrl: "https://i.pravatar.cc/64?img=7",
     likeCount: 6,
     status: "published",
+    createdAt: "2026-06-20",
   },
   {
     id: "4",
@@ -110,6 +182,7 @@ export const mockWallPosts: WallPost[] = [
     authorAvatarUrl: "https://i.pravatar.cc/64?img=9",
     likeCount: 15,
     status: "published",
+    createdAt: "2026-07-10",
   },
   {
     id: "5",
@@ -126,6 +199,7 @@ export const mockWallPosts: WallPost[] = [
     authorAvatarUrl: "https://i.pravatar.cc/64?img=11",
     likeCount: 3,
     status: "published",
+    createdAt: "2026-05-15",
   },
   {
     id: "6",
@@ -143,6 +217,7 @@ export const mockWallPosts: WallPost[] = [
     authorAvatarUrl: "https://i.pravatar.cc/64?img=3",
     likeCount: 9,
     status: "published",
+    createdAt: "2026-07-20",
   },
   {
     id: "7",
@@ -160,6 +235,59 @@ export const mockWallPosts: WallPost[] = [
     authorAvatarUrl: "https://i.pravatar.cc/64?img=8",
     likeCount: 8,
     status: "published",
+    createdAt: "2026-07-15",
+  },
+  {
+    id: "11",
+    kind: "agent",
+    title: "用 Agent 自動生成每週讀書會摘要信件",
+    bodyMd:
+      "把讀書會逐字稿摘要串接成每週固定寄出的信件，省下手動整理跟轉寄的時間。",
+    coverUrl: "https://picsum.photos/seed/wall11/400/240",
+    links: [{ label: "使用心得", url: "https://example.com/agent-mail-notes" }],
+    startingPoint: "會寫基本的 Python，串過一次簡單的 API，但沒寄過信件自動化。",
+    timeSpent: "大約 1 週。",
+    obstacle: "卡在寄信服務的每日額度限制，後來改成分批寄送才解決。",
+    scene: ["日常"],
+    authorName: "阿廷",
+    authorAvatarUrl: "https://i.pravatar.cc/64?img=15",
+    likeCount: 4,
+    status: "published",
+    createdAt: "2026-06-05",
+  },
+  {
+    id: "12",
+    kind: "agent",
+    title: "打造一個自動偵測作業截止日的提醒 Agent",
+    bodyMd: "串接課程平台的作業列表，自動在截止前一天提醒，避免忘記交作業。",
+    coverUrl: "https://picsum.photos/seed/wall12/400/240",
+    links: [],
+    startingPoint: "會寫基本的 JavaScript，但沒寫過排程相關的程式。",
+    timeSpent: "大約 1.5 週。",
+    obstacle: "卡在時區換算一直算錯提醒時間，後來統一改用 UTC 儲存才解決。",
+    scene: ["課業"],
+    authorName: "阿哲",
+    authorAvatarUrl: "https://i.pravatar.cc/64?img=17",
+    likeCount: 7,
+    status: "published",
+    createdAt: "2026-06-18",
+  },
+  {
+    id: "13",
+    kind: "agent",
+    title: "用 Agent 幫忙整理課堂錄音逐字稿重點",
+    bodyMd: "把課堂錄音轉成逐字稿後，用 LLM 抓出重點跟待辦事項，複習更有效率。",
+    coverUrl: "",
+    links: [{ label: "專案筆記", url: "https://example.com/lecture-agent-notes" }],
+    startingPoint: "有基本的 Python 能力，沒處理過語音轉文字的資料。",
+    timeSpent: "大約 2 週，主要是週末時間。",
+    obstacle: "卡在逐字稿有很多口語贅字影響摘要品質，後來加了一個前處理步驟過濾掉才改善。",
+    scene: ["課業", "日常"],
+    authorName: "小庭",
+    authorAvatarUrl: "https://i.pravatar.cc/64?img=19",
+    likeCount: 3,
+    status: "published",
+    createdAt: "2026-05-20",
   },
   {
     id: "8",
@@ -176,6 +304,7 @@ export const mockWallPosts: WallPost[] = [
     authorAvatarUrl: "", // 故意留空，測試「無頭像時不顯示空 img」
     likeCount: 5,
     status: "published",
+    createdAt: "2026-05-02",
   },
   {
     id: "9",
@@ -193,6 +322,58 @@ export const mockWallPosts: WallPost[] = [
     authorAvatarUrl: "https://i.pravatar.cc/64?img=13",
     likeCount: 11,
     status: "published",
+    createdAt: "2026-07-02",
+  },
+  {
+    id: "14",
+    kind: "note",
+    title: "讀書會筆記：Prompt Engineering 常見誤區",
+    bodyMd: "整理這週讀書會討論的幾個常見 prompt 設計誤區，附上修正前後的對照範例。",
+    coverUrl: "https://picsum.photos/seed/wall14/400/240",
+    links: [{ label: "對照範例文件", url: "https://example.com/prompt-pitfalls" }],
+    startingPoint: "會用 ChatGPT，但沒有系統性想過 prompt 設計的原則。",
+    timeSpent: "讀書會 2 小時 + 整理筆記 1 小時。",
+    obstacle: "卡在不知道怎麼判斷 prompt 是不是「太模糊」，後來用「拆解成步驟」的方式練習才有感。",
+    scene: ["課業"],
+    authorName: "阿廷",
+    authorAvatarUrl: "https://i.pravatar.cc/64?img=21",
+    likeCount: 6,
+    status: "published",
+    createdAt: "2026-04-10",
+  },
+  {
+    id: "15",
+    kind: "note",
+    title: "讀書會筆記：RAG 系統的資料前處理眉角",
+    bodyMd: "這週讀書會聚焦在 RAG 的資料前處理環節，整理常見的切塊策略跟踩雷點。",
+    coverUrl: "https://picsum.photos/seed/wall15/400/240",
+    links: [{ label: "投影片", url: "https://example.com/rag-preprocess-slides" }],
+    startingPoint: "知道 RAG 的基本流程，但沒實際處理過真實文件的切塊。",
+    timeSpent: "讀書會 2 小時 + 自己再讀相關文章 1 小時。",
+    obstacle: "卡在切塊大小抓不準，太大檢索不準、太小失去上下文，後來抓中間值搭配重疊視窗才改善。",
+    scene: ["職涯"],
+    authorName: "阿哲",
+    authorAvatarUrl: "https://i.pravatar.cc/64?img=23",
+    likeCount: 9,
+    status: "published",
+    createdAt: "2026-06-25",
+  },
+  {
+    id: "16",
+    kind: "note",
+    title: "讀書會筆記：如何評估 LLM 輸出品質",
+    bodyMd: "整理讀書會討論的幾種 LLM 輸出評估方法，從人工評分到自動化指標都有涵蓋。",
+    coverUrl: "https://picsum.photos/seed/wall16/400/240",
+    links: [],
+    startingPoint: "知道要評估輸出品質，但不知道有哪些具體的做法可以參考。",
+    timeSpent: "讀書會 2 小時。",
+    obstacle: "卡在自動化指標跟實際體感常常對不上，後來理解要搭配少量人工抽樣才踏實。",
+    scene: ["課業", "職涯"],
+    authorName: "小凱",
+    authorAvatarUrl: "https://i.pravatar.cc/64?img=25",
+    likeCount: 5,
+    status: "published",
+    createdAt: "2026-07-20",
   },
   {
     id: "10",
@@ -209,5 +390,6 @@ export const mockWallPosts: WallPost[] = [
     authorAvatarUrl: "",
     likeCount: 0,
     status: "draft",
+    createdAt: "2026-08-04",
   },
 ];

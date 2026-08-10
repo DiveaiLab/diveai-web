@@ -3,15 +3,16 @@
 import Link from "next/link";
 import WallHeader from "./WallHeader";
 import WallFooter from "./WallFooter";
+import CommentSection from "./CommentSection";
 import { useWallState } from "../lib/wall-state-context";
-import { KIND_LABELS } from "../lib/mock-posts";
+import { KIND_LABELS, getCommentsForPost } from "../lib/mock-posts";
 
 type PostDetailClientProps = {
   id: string;
 };
 
 export default function PostDetailClient({ id }: PostDetailClientProps) {
-  const { posts, hasLiked, likePost } = useWallState();
+  const { posts, isLoggedIn, hasLiked, likePost } = useWallState();
 
   // 找不到文章（id 不存在或不是 published）：畫面顯示文字提示，不用 alert，
   // 並保留返回列表的連結
@@ -153,6 +154,17 @@ export default function PostDetailClient({ id }: PostDetailClientProps) {
         >
           {liked ? `已讚（${post.likeCount} 個讚）` : `👍 按讚（${post.likeCount} 個讚）`}
         </button>
+
+        {/* 留言／回饋：只在「讀書會筆記」（kind = 'note'）單篇頁顯示 */}
+        {post.kind === "note" && (
+          <div className="mt-12">
+            <CommentSection
+              postId={post.id}
+              comments={getCommentsForPost(post.id)}
+              isLoggedIn={isLoggedIn}
+            />
+          </div>
+        )}
       </main>
 
       <WallFooter />
