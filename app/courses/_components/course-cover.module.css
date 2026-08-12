@@ -1,0 +1,227 @@
+.cover {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  isolation: isolate;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 28px;
+  color: var(--cover-ink);
+  background: var(--cover-background);
+}
+
+.cover::before {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: linear-gradient(
+      90deg,
+      transparent 49.6%,
+      rgb(14 14 44 / 6%) 49.6%,
+      rgb(14 14 44 / 6%) 50.4%,
+      transparent 50.4%
+    ),
+    linear-gradient(
+      transparent 49.6%,
+      rgb(14 14 44 / 6%) 49.6%,
+      rgb(14 14 44 / 6%) 50.4%,
+      transparent 50.4%
+    );
+  background-size: 42px 42px;
+  content: "";
+  mask-image: linear-gradient(to bottom right, black, transparent 76%);
+}
+
+.cover::after {
+  position: absolute;
+  right: -12%;
+  bottom: -44%;
+  z-index: -1;
+  width: 76%;
+  aspect-ratio: 1;
+  border: 1px solid var(--cover-line);
+  border-radius: 50%;
+  box-shadow: 0 0 0 42px transparent, 0 0 0 43px var(--cover-line),
+    0 0 0 84px transparent, 0 0 0 85px var(--cover-line);
+  content: "";
+}
+
+.aqua {
+  --cover-background: #bdeaf0;
+  --cover-ink: #0e0e2c;
+  --cover-line: rgb(14 14 44 / 16%);
+  --cover-chip: #f8c0a0;
+}
+
+.peach {
+  --cover-background: #ffe1cf;
+  --cover-ink: #0e0e2c;
+  --cover-line: rgb(50 115 143 / 20%);
+  --cover-chip: #6fc1cc;
+}
+
+.navy {
+  --cover-background: #173e56;
+  --cover-ink: #fafcfe;
+  --cover-line: rgb(250 252 254 / 18%);
+  --cover-chip: #f8c0a0;
+}
+
+.mint {
+  --cover-background: #dcefdc;
+  --cover-ink: #0e0e2c;
+  --cover-line: rgb(50 115 143 / 20%);
+  --cover-chip: #fafcfe;
+}
+
+.card {
+  min-height: 260px;
+  padding: 24px;
+}
+
+.feature {
+  min-height: 430px;
+  padding: 34px;
+  border-radius: 34px;
+}
+
+.detail {
+  min-height: 490px;
+  padding: 36px;
+  border-radius: 38px;
+}
+
+.preview {
+  min-height: 345px;
+  padding: 30px;
+  border-radius: 30px;
+}
+
+.coverTopline,
+.coverBottom {
+  display: flex;
+  position: relative;
+  z-index: 2;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.feature .coverTopline,
+.feature .coverBottom,
+.detail .coverTopline,
+.detail .coverBottom {
+  font-size: 11px;
+}
+
+.orbit {
+  position: absolute;
+  top: 15%;
+  right: 8%;
+  width: 38%;
+  aspect-ratio: 1;
+}
+
+.orbit span {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--cover-line);
+  border-radius: 50%;
+}
+
+.orbit span:nth-child(2) {
+  inset: 19%;
+}
+
+.orbit span:nth-child(3) {
+  inset: 42%;
+  border: 0;
+  background: var(--cover-chip);
+}
+
+.coverTitle {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  max-width: 88%;
+  gap: 9px;
+}
+
+.coverLabel {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  opacity: 0.68;
+}
+
+.coverTitle strong {
+  font-size: clamp(27px, 3vw, 42px);
+  font-weight: 800;
+  letter-spacing: 0.025em;
+  line-height: 1.18;
+}
+
+.card .coverTitle strong {
+  font-size: clamp(25px, 2.2vw, 34px);
+}
+
+.feature .coverTitle strong,
+.detail .coverTitle strong {
+  max-width: 480px;
+  font-size: clamp(38px, 5vw, 62px);
+}
+
+.stepMark {
+  display: grid;
+  width: 47px;
+  height: 47px;
+  place-items: center;
+  border: 1px solid var(--cover-line);
+  border-radius: 50% 50% 50% 16%;
+  background: rgb(250 252 254 / 30%);
+  font-size: 11px;
+  letter-spacing: 0;
+  transform: rotate(-6deg);
+}
+
+.playBadge {
+  position: absolute;
+  right: 7%;
+  bottom: 23%;
+  z-index: 3;
+  display: grid;
+  width: 68px;
+  height: 68px;
+  padding-left: 5px;
+  place-items: center;
+  border: 6px solid rgb(250 252 254 / 35%);
+  border-radius: 50%;
+  background: var(--course-dark);
+  background-clip: padding-box;
+  color: var(--course-cloud);
+  font-size: 18px;
+  box-shadow: 0 14px 32px rgb(14 14 44 / 20%);
+}
+
+@media (max-width: 720px) {
+  .feature,
+  .detail {
+    min-height: 390px;
+    padding: 26px;
+    border-radius: 28px;
+  }
+
+  .feature .coverTitle strong,
+  .detail .coverTitle strong {
+    font-size: clamp(36px, 12vw, 50px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover {
+    scroll-behavior: auto;
+  }
+}

@@ -1,0 +1,164 @@
+.header {
+  position: relative;
+  z-index: 20;
+  border-bottom: 1px solid rgb(50 115 143 / 12%);
+  background: rgb(250 252 254 / 84%);
+  backdrop-filter: blur(18px);
+}
+
+.inner {
+  position: relative;
+  display: flex;
+  width: min(1180px, calc(100% - 40px));
+  min-height: 80px;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: block;
+  width: clamp(148px, 14vw, 184px);
+  line-height: 0;
+}
+
+.brand img {
+  width: 100%;
+  height: auto;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: clamp(28px, 4vw, 52px);
+}
+
+.navigation a {
+  position: relative;
+  padding: 10px 2px;
+  color: var(--brand-dark);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.navigation a::after {
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+  left: 0;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--brand-primary);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 180ms ease;
+}
+
+.navigation a:hover::after,
+.navigation a:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.menuButton {
+  position: relative;
+  display: none;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgb(50 115 143 / 18%);
+  border-radius: 15px;
+  background: var(--brand-light);
+  cursor: pointer;
+}
+
+.lineTop,
+.lineBottom,
+.lineTopOpen,
+.lineBottomOpen {
+  position: absolute;
+  left: 12px;
+  width: 20px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--brand-dark);
+  transition: transform 180ms ease, top 180ms ease;
+}
+
+.lineTop {
+  top: 17px;
+}
+
+.lineBottom {
+  top: 25px;
+}
+
+.lineTopOpen,
+.lineBottomOpen {
+  top: 21px;
+}
+
+.lineTopOpen {
+  transform: rotate(45deg);
+}
+
+.lineBottomOpen {
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 720px) {
+  .inner {
+    width: min(100% - 32px, 1180px);
+    min-height: 70px;
+  }
+
+  .brand {
+    width: 142px;
+  }
+
+  .menuButton {
+    display: block;
+  }
+
+  .navigation {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 10px;
+    border: 1px solid rgb(50 115 143 / 15%);
+    border-radius: 20px;
+    background: rgb(250 252 254 / 98%);
+    box-shadow: 0 18px 50px rgb(50 115 143 / 16%);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .navigationOpen {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .navigation a {
+    padding: 14px 16px;
+    border-radius: 13px;
+  }
+
+  .navigation a:hover,
+  .navigation a:focus-visible {
+    background: var(--brand-background);
+  }
+
+  .navigation a::after {
+    display: none;
+  }
+}
