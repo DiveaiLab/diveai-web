@@ -3,10 +3,15 @@
 import WallHeader from "./components/WallHeader";
 import WallFooter from "./components/WallFooter";
 import HeroSection from "./components/HeroSection";
+import TagMarquee from "./components/TagMarquee";
 import WallCarouselSection from "./components/WallCarouselSection";
 import TeamUpdatesSidebar from "./components/TeamUpdatesSidebar";
 import { useWallState } from "./lib/wall-state-context";
-import { getPublishedPostsByKind, type WallPostKind } from "./lib/mock-posts";
+import {
+  getPublishedPostsByKind,
+  getAllPublishedTags,
+  type WallPostKind,
+} from "./lib/mock-posts";
 import { mockTeamGroups } from "./lib/mock-teams";
 
 // 顯示順序：讀書會筆記排最前面，因為目前是團隊產出最豐富的內容類型；
@@ -21,6 +26,7 @@ const SECTIONS: { kind: WallPostKind; title: string; viewAllHref: string }[] = [
 export default function WallPageClient() {
   const { posts, isLoggedIn, toggleLogin, hasLiked, likePost } = useWallState();
   const publishedCount = posts.filter((post) => post.status === "published").length;
+  const allTags = getAllPublishedTags(posts);
 
   return (
     <div className="min-h-screen bg-[#FBFBFA] text-gray-800 font-sans selection:bg-blue-100 selection:text-blue-700">
@@ -28,6 +34,10 @@ export default function WallPageClient() {
 
       <main className="pt-12 pb-16">
         <HeroSection publishedCount={publishedCount} teamCount={mockTeamGroups.length} />
+
+        {/* Hero 下方的標籤動畫區塊：三列交錯滾動，點擊任一標籤導向
+            /commuity-wall/tag/[tagName] */}
+        <TagMarquee tags={allTags} />
 
         {/* 假登入開關：僅用來模擬「按讚需登入」的前台狀態，非投稿相關功能。
             只在列表頁畫一次，單篇頁共用同一個 isLoggedIn 判斷，不重複畫 UI */}

@@ -20,6 +20,7 @@ export type WallPost = {
   timeSpent: string; // 必填：花了多久
   obstacle: string; // 必填：卡在哪、怎麼解決
   scene: WallPostScene[];
+  techTags: string[]; // Hero 標籤動畫、/tag/[tagName] 用；依每篇實際內容填 2-4 個
   authorName: string;
   authorAvatarUrl: string;
   likeCount: number;
@@ -48,6 +49,26 @@ export function getPublishedPostsByKind(
   return posts
     .filter((post) => post.status === "published" && post.kind === kind)
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0));
+}
+
+// 取出某個技術標籤底下所有已發布的文章，/tag/[tagName] 頁面用。
+export function getPublishedPostsByTag(posts: WallPost[], tagName: string): WallPost[] {
+  return posts
+    .filter((post) => post.status === "published" && post.techTags.includes(tagName))
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0));
+}
+
+// Hero 標籤動畫用：只收集「已發布」文章的標籤，草稿不會影響前台顯示的標籤池，
+// 依字母／筆畫原始出現順序去重（不用特別排序，滾動動畫本來就不需要排序）。
+export function getAllPublishedTags(posts: WallPost[]): string[] {
+  const seen = new Set<string>();
+  for (const post of posts) {
+    if (post.status !== "published") continue;
+    for (const tag of post.techTags) {
+      seen.add(tag);
+    }
+  }
+  return Array.from(seen);
 }
 
 // 留言／回饋假資料。之後會換成真實留言系統的資料表，目前只用來在
@@ -121,6 +142,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "大約花了 3 週，每天下班後投入 1-2 小時。",
     obstacle: "卡在前後端資料串接一直失敗，後來發現是 CORS 設定沒開，查了官方文件加上一行設定就解決了。",
     scene: ["職涯", "日常"],
+    techTags: ["JavaScript", "API 串接", "CORS"],
     authorName: "小美",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=1",
     likeCount: 12,
@@ -139,6 +161,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "三天兩夜，幾乎全程投入。",
     obstacle: "卡在團隊分工混亂導致進度落後，後來改用每 4 小時一次的站立會議同步進度才追上。",
     scene: ["課業", "職涯"],
+    techTags: ["專案管理", "網站開發"],
     authorName: "小凱",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=5",
     likeCount: 20,
@@ -157,6 +180,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "斷斷續續花了 10 天左右。",
     obstacle: "卡在 Notion API 的分頁機制一直漏抓資料，後來照著官方文件把 pagination 邏輯補齊才修好。",
     scene: ["課業"],
+    techTags: ["Notion AI", "API 串接", "JavaScript"],
     authorName: "阿仁",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=7",
     likeCount: 6,
@@ -178,6 +202,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "大約 2 週，主要是社課空檔時間。",
     obstacle: "卡在手機版排版一直跑掉，後來改用 Flexbox 重寫版面才解決。",
     scene: ["實習", "日常"],
+    techTags: ["網站開發", "API 串接"],
     authorName: "小雨",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=9",
     likeCount: 15,
@@ -195,6 +220,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "一個週末，大約 8 小時。",
     obstacle: "卡在畫面會閃爍，後來才知道要用 requestAnimationFrame 取代 setInterval 才順。",
     scene: ["日常"],
+    techTags: ["JavaScript", "演算法"],
     authorName: "阿凱",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=11",
     likeCount: 3,
@@ -213,6 +239,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "大約 2 週，主要是晚上的零碎時間。",
     obstacle: "卡在 API 呼叫額度限制，後來改成先分段摘要、再彙整總結才解決。",
     scene: ["實習"],
+    techTags: ["LLM", "Agent 開發", "自動化流程"],
     authorName: "小華",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=3",
     likeCount: 9,
@@ -231,6 +258,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "大約 2 週，主要是晚上跟週末的零碎時間。",
     obstacle: "卡在逐字稿太長會超過 token 上限，後來改成先分段摘要、再彙整成總結才解決。",
     scene: ["實習", "日常"],
+    techTags: ["LLM", "Agent 開發", "自動化流程"],
     authorName: "小葉",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=8",
     likeCount: 8,
@@ -249,6 +277,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "大約 1 週。",
     obstacle: "卡在寄信服務的每日額度限制，後來改成分批寄送才解決。",
     scene: ["日常"],
+    techTags: ["Agent 開發", "自動化流程", "內容整理"],
     authorName: "阿廷",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=15",
     likeCount: 4,
@@ -266,6 +295,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "大約 1.5 週。",
     obstacle: "卡在時區換算一直算錯提醒時間，後來統一改用 UTC 儲存才解決。",
     scene: ["課業"],
+    techTags: ["Agent 開發", "自動化流程"],
     authorName: "阿哲",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=17",
     likeCount: 7,
@@ -283,6 +313,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "大約 2 週，主要是週末時間。",
     obstacle: "卡在逐字稿有很多口語贅字影響摘要品質，後來加了一個前處理步驟過濾掉才改善。",
     scene: ["課業", "日常"],
+    techTags: ["LLM", "Python", "Agent 開發"],
     authorName: "小庭",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=19",
     likeCount: 3,
@@ -300,6 +331,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "斷斷續續花了 2 個月才真正理解。",
     obstacle: "一直卡在不知道遞迴什麼時候會結束，後來用畫圖追蹤呼叫堆疊的方式，才終於想通。",
     scene: ["課業"],
+    techTags: ["演算法", "讀書會筆記"],
     authorName: "阿強",
     authorAvatarUrl: "", // 故意留空，測試「無頭像時不顯示空 img」
     likeCount: 5,
@@ -318,6 +350,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "讀書會 2 小時 + 自己整理筆記 1 小時。",
     obstacle: "卡在分不清 fine-tuning 跟 RAG 的使用時機，後來畫了一張比較表才釐清。",
     scene: ["課業", "職涯"],
+    techTags: ["LLM", "Fine-tuning", "讀書會筆記"],
     authorName: "小婷",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=13",
     likeCount: 11,
@@ -335,6 +368,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "讀書會 2 小時 + 整理筆記 1 小時。",
     obstacle: "卡在不知道怎麼判斷 prompt 是不是「太模糊」，後來用「拆解成步驟」的方式練習才有感。",
     scene: ["課業"],
+    techTags: ["Prompt Engineering", "ChatGPT", "讀書會筆記"],
     authorName: "阿廷",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=21",
     likeCount: 6,
@@ -352,6 +386,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "讀書會 2 小時 + 自己再讀相關文章 1 小時。",
     obstacle: "卡在切塊大小抓不準，太大檢索不準、太小失去上下文，後來抓中間值搭配重疊視窗才改善。",
     scene: ["職涯"],
+    techTags: ["RAG", "資料處理", "讀書會筆記"],
     authorName: "阿哲",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=23",
     likeCount: 9,
@@ -369,6 +404,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "讀書會 2 小時。",
     obstacle: "卡在自動化指標跟實際體感常常對不上，後來理解要搭配少量人工抽樣才踏實。",
     scene: ["課業", "職涯"],
+    techTags: ["LLM", "讀書會筆記"],
     authorName: "小凱",
     authorAvatarUrl: "https://i.pravatar.cc/64?img=25",
     likeCount: 5,
@@ -386,6 +422,7 @@ export const mockWallPosts: WallPost[] = [
     timeSpent: "隨便填的內容，測試用。",
     obstacle: "隨便填的內容，測試用。",
     scene: ["實習"],
+    techTags: ["讀書會筆記"],
     authorName: "測試用作者",
     authorAvatarUrl: "",
     likeCount: 0,
