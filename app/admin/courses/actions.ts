@@ -14,7 +14,6 @@ function getText(formData: FormData, field: CourseField) {
   const value = formData.get(field);
   return typeof value === "string" ? value.trim() : "";
 }
-
 function parseHttpUrl(value: string) {
   try {
     const url = new URL(value);
@@ -232,4 +231,3 @@ export async function saveCourseAction(
     }).format(new Date()),
   };
 }
-

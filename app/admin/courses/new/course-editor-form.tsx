@@ -58,7 +58,6 @@ function parseHttpUrl(value: string) {
     return null;
   }
 }
-
 function getVideoEmbedUrl(source: VideoSource, value: string) {
   const url = parseHttpUrl(value);
   if (!url) return null;
@@ -646,4 +645,3 @@ export function CourseEditorForm() {
     </form>
   );
 }
-
