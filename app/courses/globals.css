@@ -1,1 +1,61 @@
-@import "tailwindcss";
+@font-face {
+  font-family: "LINE Seed TW";
+  src: url("/fonts/LINESeedTW_OTF_Rg.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "LINE Seed TW";
+  src: url("/fonts/LINESeedTW_OTF_Bd.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "LINE Seed TW";
+  src: url("/fonts/LINESeedTW_OTF_Eb.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+.course-root {
+  --course-primary: #6fc1cc;
+  --course-secondary: #32738f;
+  --course-warm: #f8c0a0;
+  --course-dark: #0e0e2c;
+  --course-slate: #8c8ca1;
+  --course-line: #ecf1f4;
+  --course-cloud: #fafcfe;
+  --course-sky: #eaf7fa;
+  min-height: 100svh;
+  overflow: clip;
+  background: var(--course-cloud);
+  color: var(--course-dark);
+  font-family: "LINE Seed TW", sans-serif;
+}
+
+.course-root * {
+  box-sizing: border-box;
+}
+
+.course-root a,
+.course-root button,
+.course-root input,
+.course-root select,
+.course-root textarea {
+  font: inherit;
+}
+
+.course-root a,
+.course-root button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.course-root ::selection {
+  background: var(--course-warm);
+  color: var(--course-dark);
+}
