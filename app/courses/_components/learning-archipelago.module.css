@@ -1,0 +1,1088 @@
+.section {
+  scroll-margin-top: 20px;
+  position: relative;
+  overflow: hidden;
+  padding: clamp(92px, 11vw, 150px) 0;
+  background:
+    radial-gradient(circle at 8% 18%, rgb(111 193 204 / 18%) 0 1px, transparent 2px),
+    radial-gradient(circle at 92% 82%, rgb(248 192 160 / 15%) 0 1px, transparent 2px),
+    #071d31;
+  background-size: 31px 31px, 43px 43px, auto;
+  color: var(--course-cloud);
+}
+
+.section::before,
+.section::after {
+  position: absolute;
+  border: 1px solid rgb(111 193 204 / 14%);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+
+.section::before {
+  top: -210px;
+  right: -170px;
+  width: 560px;
+  height: 560px;
+  box-shadow: 0 0 0 44px rgb(111 193 204 / 4%), 0 0 0 96px rgb(111 193 204 / 3%);
+}
+
+.section::after {
+  bottom: -330px;
+  left: -250px;
+  width: 640px;
+  height: 640px;
+  box-shadow: 0 0 0 58px rgb(248 192 160 / 3%);
+}
+
+.sectionInner {
+  position: relative;
+  z-index: 1;
+  width: min(1280px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.heading {
+  display: grid;
+  margin-bottom: clamp(42px, 5vw, 68px);
+  align-items: end;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  gap: clamp(40px, 8vw, 110px);
+}
+
+.headingCopy {
+  max-width: 770px;
+}
+
+.eyebrow {
+  margin: 0 0 20px;
+  color: var(--course-primary);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.17em;
+}
+
+.heading h2 {
+  margin: 0;
+  color: var(--course-cloud);
+  font-size: clamp(42px, 5.8vw, 72px);
+  font-weight: 800;
+  letter-spacing: 0.015em;
+  line-height: 1.15;
+}
+
+.headingCopy > p:last-child {
+  max-width: 680px;
+  margin: 25px 0 0;
+  color: rgb(250 252 254 / 64%);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.progressCard {
+  padding: 23px 25px 20px;
+  border: 1px solid rgb(111 193 204 / 25%);
+  border-radius: 22px;
+  background: rgb(250 252 254 / 6%);
+}
+
+.progressTopline {
+  display: flex;
+  margin-bottom: 17px;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.progressTopline span {
+  color: rgb(250 252 254 / 58%);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.progressTopline strong {
+  color: var(--course-warm);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.progressCard progress {
+  display: block;
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  appearance: none;
+  background: rgb(250 252 254 / 12%);
+}
+
+.progressCard progress::-webkit-progress-bar {
+  border-radius: 999px;
+  background: rgb(250 252 254 / 12%);
+}
+
+.progressCard progress::-webkit-progress-value {
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--course-primary), var(--course-warm));
+}
+
+.progressCard progress::-moz-progress-bar {
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--course-primary), var(--course-warm));
+}
+
+.progressCard > p {
+  margin: 14px 0 0;
+  color: rgb(250 252 254 / 56%);
+  font-size: 11px;
+}
+
+.progressCard > p strong {
+  color: var(--course-cloud);
+  font-size: 14px;
+}
+
+.voyageGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(340px, 0.65fr);
+  gap: 20px;
+}
+
+.map {
+  position: relative;
+  min-height: 650px;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 44%);
+  border-radius: 38px 12px 38px 38px;
+  background:
+    linear-gradient(90deg, rgb(50 115 143 / 8%) 1px, transparent 1px),
+    linear-gradient(rgb(50 115 143 / 8%) 1px, transparent 1px),
+    radial-gradient(circle at 50% 48%, #e6f8f6 0%, #d4eeee 50%, #c5e3e5 100%);
+  background-size: 54px 54px, 54px 54px, auto;
+  box-shadow: inset 0 0 90px rgb(50 115 143 / 14%);
+  color: var(--course-dark);
+  isolation: isolate;
+}
+
+.map::before {
+  position: absolute;
+  top: 51%;
+  left: 47%;
+  z-index: -1;
+  width: 570px;
+  height: 390px;
+  border: 1px solid rgb(50 115 143 / 13%);
+  border-radius: 52% 48% 58% 42% / 43% 56% 44% 57%;
+  box-shadow:
+    0 0 0 24px rgb(50 115 143 / 5%),
+    0 0 0 52px rgb(50 115 143 / 4%);
+  content: "";
+  transform: translate(-50%, -50%) rotate(-7deg);
+}
+
+.mapTopline {
+  position: absolute;
+  top: 25px;
+  right: 28px;
+  left: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  color: rgb(14 14 44 / 46%);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+}
+
+.mapTopline::after {
+  position: absolute;
+  right: 0;
+  bottom: -12px;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgb(50 115 143 / 18%), transparent);
+  content: "";
+}
+
+.mapCompass {
+  position: absolute;
+  top: 82px;
+  left: 43px;
+  display: grid;
+  width: 72px;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgb(50 115 143 / 22%);
+  border-radius: 50%;
+  color: var(--course-secondary);
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.mapCompass::before,
+.mapCompass::after {
+  position: absolute;
+  background: rgb(50 115 143 / 22%);
+  content: "";
+}
+
+.mapCompass::before {
+  width: 1px;
+  height: 88px;
+}
+
+.mapCompass::after {
+  width: 88px;
+  height: 1px;
+}
+
+.mapCompass span {
+  position: absolute;
+  top: 7px;
+}
+
+.mapCompass i {
+  width: 12px;
+  height: 47px;
+  background: linear-gradient(var(--course-warm) 0 49%, var(--course-secondary) 50%);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  transform: rotate(23deg);
+}
+
+.seaMarks span {
+  position: absolute;
+  width: 44px;
+  height: 6px;
+  border-top: 1px solid rgb(50 115 143 / 18%);
+  border-bottom: 1px solid rgb(50 115 143 / 13%);
+  border-radius: 50%;
+}
+
+.seaMarks span:first-child {
+  top: 31%;
+  right: 22%;
+  transform: rotate(-8deg);
+}
+
+.seaMarks span:nth-child(2) {
+  right: 42%;
+  bottom: 19%;
+  transform: rotate(7deg);
+}
+
+.seaMarks span:last-child {
+  top: 45%;
+  left: 21%;
+}
+
+.route {
+  position: absolute;
+  z-index: 0;
+  height: 2px;
+  border-top: 2px dashed rgb(14 14 44 / 42%);
+  transform-origin: left center;
+}
+
+.route::after {
+  position: absolute;
+  top: -5px;
+  right: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--course-cloud);
+  box-shadow: 0 0 0 2px var(--course-secondary);
+  content: "";
+}
+
+.routeOne {
+  top: 64%;
+  left: 19%;
+  width: 29%;
+  transform: rotate(-44deg);
+}
+
+.routeTwo {
+  top: 36%;
+  left: 45%;
+  width: 28%;
+  transform: rotate(35deg);
+}
+
+.routeThree {
+  top: 58%;
+  left: 71%;
+  width: 25%;
+  transform: rotate(-52deg);
+}
+
+.journeyList {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  inset: 0;
+}
+
+.node {
+  --state-color: var(--course-secondary);
+  position: absolute;
+  z-index: 2;
+  top: var(--node-y);
+  left: var(--node-x);
+  transform: translate(-50%, -50%);
+}
+
+.node.completed {
+  --state-color: #337c72;
+}
+
+.node.current {
+  --state-color: #e36f50;
+  z-index: 3;
+}
+
+.node.available {
+  --state-color: var(--course-secondary);
+}
+
+.node.locked {
+  --state-color: #77848d;
+}
+
+.node button {
+  position: relative;
+  display: grid;
+  min-width: 150px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--course-dark);
+  cursor: pointer;
+  text-align: center;
+}
+
+.node button:focus-visible {
+  border-radius: 32px;
+  outline: 3px solid var(--course-secondary);
+  outline-offset: 8px;
+}
+
+.island {
+  position: relative;
+  display: grid;
+  width: 142px;
+  height: 94px;
+  place-items: center;
+  border: 7px solid rgb(250 252 254 / 79%);
+  border-radius: 60% 40% 52% 48% / 46% 61% 39% 54%;
+  background:
+    radial-gradient(circle at 32% 28%, rgb(255 255 255 / 45%) 0 4px, transparent 5px),
+    linear-gradient(145deg, #91c7ad, #569883 66%, #327067);
+  box-shadow:
+    0 17px 0 -9px rgb(50 115 143 / 20%),
+    0 23px 35px rgb(20 87 100 / 22%);
+  transition: filter 180ms ease, transform 180ms ease;
+}
+
+.node:nth-child(2) .island {
+  width: 158px;
+  height: 108px;
+  border-radius: 43% 57% 63% 37% / 57% 38% 62% 43%;
+  background:
+    radial-gradient(circle at 71% 27%, rgb(255 255 255 / 46%) 0 5px, transparent 6px),
+    linear-gradient(125deg, #7dc8bc, #3e8f83 68%, #286a6c);
+}
+
+.node:nth-child(3) .island {
+  width: 137px;
+  height: 103px;
+  border-radius: 51% 49% 37% 63% / 39% 58% 42% 61%;
+  background:
+    radial-gradient(circle at 28% 64%, rgb(255 255 255 / 42%) 0 4px, transparent 5px),
+    linear-gradient(140deg, #89c3a3, #4c8d78 70%, #386b64);
+}
+
+.node:nth-child(4) .island {
+  width: 128px;
+  height: 91px;
+  border-radius: 39% 61% 53% 47% / 65% 43% 57% 35%;
+  background:
+    radial-gradient(circle at 69% 31%, rgb(255 255 255 / 37%) 0 3px, transparent 4px),
+    linear-gradient(145deg, #a6c9af, #6b9583 65%, #577568);
+}
+
+.island::before,
+.island::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.island::before {
+  z-index: -1;
+  border: 1px solid rgb(50 115 143 / 24%);
+  border-radius: inherit;
+  inset: -15px -18px;
+  transform: rotate(7deg);
+}
+
+.island::after {
+  top: 22%;
+  left: 25%;
+  width: 52%;
+  height: 48%;
+  border: 1px solid rgb(250 252 254 / 25%);
+  border-radius: 58% 42% 48% 52% / 44% 55% 45% 56%;
+  transform: rotate(-11deg);
+}
+
+.islandContour {
+  position: absolute;
+  top: 10px;
+  right: 13px;
+  bottom: 13px;
+  left: 11px;
+  border: 1px dashed rgb(14 14 44 / 13%);
+  border-radius: inherit;
+}
+
+.islandMarker {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 38px;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 3px solid var(--course-cloud);
+  border-radius: 50%;
+  background: var(--state-color);
+  box-shadow: 0 6px 16px rgb(14 14 44 / 28%);
+  color: var(--course-cloud);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.current .islandMarker::after {
+  position: absolute;
+  border: 2px solid var(--course-warm);
+  border-radius: 50%;
+  content: "";
+  inset: -11px;
+  animation: currentPulse 1.8s ease-out infinite;
+}
+
+.locked .island {
+  filter: grayscale(0.78) saturate(0.45) opacity(0.76);
+}
+
+.available .island {
+  animation: islandFloat 3.4s ease-in-out infinite;
+}
+
+.node button:hover .island,
+.node button:focus-visible .island,
+.selected .island {
+  filter: saturate(1.14) brightness(1.03);
+  transform: translateY(-6px) rotate(-1deg);
+}
+
+.locked button:hover .island,
+.locked button:focus-visible .island,
+.locked.selected .island {
+  filter: grayscale(0.45) saturate(0.7) opacity(0.9);
+}
+
+.nodeCopy {
+  display: grid;
+  margin-top: 12px;
+  justify-items: center;
+  text-shadow: 0 1px 0 rgb(250 252 254 / 75%);
+}
+
+.nodeStep {
+  color: rgb(14 14 44 / 52%);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+}
+
+.nodeCopy strong {
+  max-width: 180px;
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.025em;
+  line-height: 1.35;
+}
+
+.nodeState {
+  margin-top: 5px;
+  padding: 4px 7px;
+  border: 1px solid rgb(250 252 254 / 58%);
+  border-radius: 999px;
+  background: rgb(250 252 254 / 76%);
+  color: var(--state-color);
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.mapScale {
+  position: absolute;
+  right: 28px;
+  bottom: 23px;
+  display: grid;
+  width: 112px;
+  align-items: center;
+  grid-template-columns: 1fr auto;
+  gap: 5px 8px;
+  color: rgb(14 14 44 / 46%);
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.mapScale span:first-child {
+  height: 7px;
+  grid-column: 1 / -1;
+  border-right: 1px solid rgb(14 14 44 / 35%);
+  border-bottom: 1px solid rgb(14 14 44 / 35%);
+  border-left: 1px solid rgb(14 14 44 / 35%);
+}
+
+.mapScale span:last-child {
+  justify-self: end;
+}
+
+.detailCard {
+  position: relative;
+  display: flex;
+  min-height: 650px;
+  padding: 31px 32px 29px;
+  flex-direction: column;
+  border: 1px solid rgb(250 252 254 / 12%);
+  border-radius: 12px 38px 38px 38px;
+  background:
+    radial-gradient(circle at 100% 0, rgb(111 193 204 / 19%), transparent 31%),
+    var(--course-cloud);
+  color: var(--course-dark);
+}
+
+.detailCard::before {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  bottom: 14px;
+  left: 14px;
+  border: 1px dashed rgb(50 115 143 / 12%);
+  border-radius: 4px 27px 27px 27px;
+  content: "";
+  pointer-events: none;
+}
+
+.detailCard > * {
+  position: relative;
+  z-index: 1;
+}
+
+.detailTopline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: rgb(14 14 44 / 42%);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+}
+
+.detailStatusRow {
+  display: flex;
+  margin-top: 39px;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.statusBadge,
+.availabilityBadge {
+  display: inline-flex;
+  min-height: 28px;
+  padding: 0 10px;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.statusBadge.completed {
+  background: #e3f2eb;
+  color: #286b62;
+}
+
+.statusBadge.current {
+  background: #fee8dd;
+  color: #b34d31;
+}
+
+.statusBadge.available {
+  background: var(--course-sky);
+  color: var(--course-secondary);
+}
+
+.statusBadge.locked {
+  background: #eceff1;
+  color: #64717a;
+}
+
+.availabilityBadge {
+  border: 1px solid rgb(50 115 143 / 16%);
+  color: rgb(14 14 44 / 56%);
+}
+
+.detailLandmass {
+  margin: 30px 0 0;
+  color: var(--course-secondary);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.detailCard h3 {
+  margin: 10px 0 0;
+  font-size: clamp(27px, 2.7vw, 38px);
+  font-weight: 900;
+  letter-spacing: 0.015em;
+  line-height: 1.28;
+}
+
+.detailSummary {
+  margin: 17px 0 0;
+  color: rgb(14 14 44 / 62%);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.detailFacts {
+  display: grid;
+  margin: 27px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--course-line);
+}
+
+.detailFacts > div {
+  display: grid;
+  min-height: 50px;
+  padding: 10px 0;
+  align-items: center;
+  grid-template-columns: 78px 1fr;
+  gap: 12px;
+  border-bottom: 1px solid var(--course-line);
+}
+
+.detailFacts dt {
+  color: var(--course-slate);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.detailFacts dd {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.unlockHint {
+  display: flex;
+  margin: 22px 0 0;
+  padding: 14px;
+  align-items: center;
+  gap: 11px;
+  border-radius: 13px;
+  background: #f0f2f3;
+  color: rgb(14 14 44 / 62%);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.unlockHint span {
+  display: grid;
+  width: 30px;
+  aspect-ratio: 1;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #dce1e4;
+  color: #64717a;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.detailActions {
+  display: flex;
+  margin-top: auto;
+  padding-top: 28px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.detailActions > button,
+.detailActions > a:not(.textLink) {
+  display: flex;
+  min-height: 52px;
+  padding: 0 18px;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  border-radius: 999px;
+  background: var(--course-dark);
+  color: var(--course-cloud);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.detailActions > button:hover,
+.detailActions > button:focus-visible,
+.detailActions > a:not(.textLink):hover,
+.detailActions > a:not(.textLink):focus-visible {
+  background: var(--course-secondary);
+  transform: translateY(-2px);
+}
+
+.detailActions > button:focus-visible,
+.detailActions > a:focus-visible,
+.resetButton:focus-visible {
+  outline: 3px solid var(--course-primary);
+  outline-offset: 3px;
+}
+
+.textLink {
+  align-self: center;
+  padding: 8px;
+  color: var(--course-secondary);
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration-color: rgb(50 115 143 / 34%);
+  text-underline-offset: 4px;
+}
+
+.resetButton {
+  margin-top: 15px;
+  padding: 10px;
+  border: 0;
+  background: transparent;
+  color: rgb(14 14 44 / 54%);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.legend {
+  display: flex;
+  margin-top: 23px;
+  padding: 0 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  color: rgb(250 252 254 / 64%);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.legend i {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border: 2px solid rgb(250 252 254 / 45%);
+  border-radius: 50%;
+}
+
+.legend i.completed {
+  background: #4d9a8e;
+}
+
+.legend i.current {
+  background: var(--course-warm);
+}
+
+.legend i.available {
+  background: var(--course-primary);
+}
+
+.legend i.locked {
+  background: #77848d;
+}
+
+.legend p {
+  margin: 0 0 0 auto;
+  color: rgb(250 252 254 / 42%);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes currentPulse {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.82);
+  }
+
+  75%,
+  100% {
+    opacity: 0;
+    transform: scale(1.38);
+  }
+}
+
+@keyframes islandFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@media (max-width: 1080px) {
+  .voyageGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .map {
+    min-height: 610px;
+  }
+
+  .detailCard {
+    display: grid;
+    min-height: auto;
+    padding: 31px 35px 34px;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+    gap: 0 44px;
+    border-radius: 12px 32px 32px;
+  }
+
+  .detailTopline,
+  .detailStatusRow,
+  .detailLandmass,
+  .detailCard h3,
+  .detailSummary {
+    grid-column: 1;
+  }
+
+  .detailFacts,
+  .unlockHint,
+  .detailActions,
+  .resetButton {
+    grid-column: 2;
+  }
+
+  .detailFacts {
+    grid-row: 1 / span 5;
+    margin-top: 30px;
+  }
+
+  .detailActions {
+    margin-top: 10px;
+    padding-top: 13px;
+  }
+}
+
+@media (max-width: 820px) {
+  .heading {
+    grid-template-columns: 1fr;
+    gap: 31px;
+  }
+
+  .progressCard {
+    max-width: 430px;
+  }
+
+  .detailCard {
+    display: flex;
+  }
+
+  .detailFacts,
+  .unlockHint,
+  .detailActions,
+  .resetButton {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .section {
+    padding: 80px 0 92px;
+  }
+
+  .sectionInner {
+    width: min(100% - 32px, 560px);
+  }
+
+  .heading h2 {
+    font-size: clamp(40px, 12vw, 56px);
+  }
+
+  .headingCopy > p:last-child {
+    font-size: 15px;
+  }
+
+  .map {
+    min-height: 0;
+    padding: 91px 19px 30px;
+    border-radius: 29px 9px 29px 29px;
+  }
+
+  .map::before,
+  .mapCompass,
+  .seaMarks,
+  .route,
+  .mapScale {
+    display: none;
+  }
+
+  .mapTopline {
+    top: 24px;
+    right: 20px;
+    left: 20px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .journeyList {
+    position: relative;
+    display: grid;
+    gap: 16px;
+    inset: auto;
+  }
+
+  .journeyList::before {
+    position: absolute;
+    top: 41px;
+    bottom: 41px;
+    left: 48px;
+    border-left: 2px dashed rgb(14 14 44 / 28%);
+    content: "";
+  }
+
+  .node {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+  }
+
+  .node button {
+    width: 100%;
+    min-width: 0;
+    min-height: 112px;
+    padding: 13px 15px 13px 9px;
+    align-items: center;
+    justify-items: stretch;
+    grid-template-columns: 82px 1fr;
+    gap: 13px;
+    border: 1px solid rgb(250 252 254 / 68%);
+    border-radius: 21px;
+    background: rgb(250 252 254 / 58%);
+    text-align: left;
+  }
+
+  .node button:focus-visible {
+    border-radius: 21px;
+    outline-offset: 3px;
+  }
+
+  .selected button {
+    border-color: var(--state-color);
+    background: rgb(250 252 254 / 84%);
+    box-shadow: 0 12px 30px rgb(20 87 100 / 12%);
+  }
+
+  .island,
+  .node:nth-child(2) .island,
+  .node:nth-child(3) .island,
+  .node:nth-child(4) .island {
+    width: 79px;
+    height: 62px;
+    border-width: 5px;
+    justify-self: center;
+  }
+
+  .islandMarker {
+    width: 30px;
+    border-width: 2px;
+    font-size: 9px;
+  }
+
+  .nodeCopy {
+    margin: 0;
+    justify-items: start;
+    text-align: left;
+  }
+
+  .nodeCopy strong {
+    max-width: none;
+    font-size: 15px;
+  }
+
+  .detailCard {
+    min-height: 590px;
+    padding: 29px 25px 27px;
+    border-radius: 9px 29px 29px;
+  }
+
+  .detailCard h3 {
+    font-size: 29px;
+  }
+
+  .legend {
+    gap: 12px 16px;
+  }
+
+  .legend p {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .available .island,
+  .current .islandMarker::after {
+    animation: none;
+  }
+
+  .island,
+  .detailActions > button,
+  .detailActions > a:not(.textLink) {
+    transition: none;
+  }
+}
