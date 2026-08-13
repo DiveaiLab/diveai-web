@@ -4,6 +4,22 @@
     "name": "diveai-web",
     "compatibility_date": "2026-08-05",
     "compatibility_flags": ["nodejs_compat"],
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "diveai-web",
+        "database_id": "TODO_REPLACE_WITH_D1_DATABASE_ID"
+      }
+    ],
+    "r2_buckets": [
+      {
+        "binding": "CONTENT_ASSETS",
+        "bucket_name": "diveai-content-assets"
+      }
+    ],
+    "vars": {
+      "CMS_AUTH_BYPASS": "false"
+    },
     "assets": {
       "directory": ".open-next/assets",
       "binding": "ASSETS"
