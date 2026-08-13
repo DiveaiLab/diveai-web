@@ -17,9 +17,6 @@
         "bucket_name": "web-assets-prod"
       }
     ],
-    "vars": {
-      "CMS_AUTH_BYPASS": "false"
-    },
     "assets": {
       "directory": ".open-next/assets",
       "binding": "ASSETS"

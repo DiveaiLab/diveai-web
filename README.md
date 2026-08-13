@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DiveAI Web
 
-## Getting Started
+Next.js App Router site deployed to Cloudflare with OpenNext. The admin area uses Cloudflare Access, D1, and R2.
 
-First, run the development server:
+## Setup
+
+```bash
+npm install
+cp .env.example .env.local
+```
+
+For local admin development, set this in `.env.local`:
+
+```bash
+CMS_AUTH_BYPASS=true
+```
+
+`CMS_AUTH_BYPASS` defaults to disabled when it is not set, and the bypass is ignored in production.
+
+## Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+http://localhost:3000/admin
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The first admin module is content management at `/admin/content`. It currently supports AI explainer articles.
 
-## Learn More
+## Cloudflare Resources
 
-To learn more about Next.js, take a look at the following resources:
+Configured bindings in `wrangler.jsonc`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Binding | Resource |
+| --- | --- |
+| `DB` | D1 database `web-prod` |
+| `CONTENT_ASSETS` | R2 bucket `web-assets-prod` |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Create resources when needed:
 
-## Deploy on Vercel
+```bash
+npx wrangler d1 create web-prod
+npx wrangler r2 bucket create web-assets-prod
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Apply D1 migrations:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npx wrangler d1 migrations apply web-prod --local
+npx wrangler d1 migrations apply web-prod --remote
+```
+
+## Admin Auth
+
+Production admin access has two layers:
+
+1. Cloudflare Access Email OTP protects `/admin/*` and `/api/admin/*`.
+2. The app checks the Access email against the D1 `admin_users` allowlist.
+
+Local development can bypass the app-level allowlist with `CMS_AUTH_BYPASS=true`.
+
+## Checks
+
+```bash
+npm run lint
+npx tsc --noEmit
+npm run build
+```
+
+`npm run build` uses Next/Turbopack and may require an environment that allows helper processes and local port binding.
