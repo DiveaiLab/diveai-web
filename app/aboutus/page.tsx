@@ -267,10 +267,7 @@ export default function AboutUsPage() {
               </div>
 
               <div>
-                <form
-                  onSubmit={(e) => e.preventDefault()}
-                  className="flex items-center gap-2 max-w-sm"
-                >
+                <form className="flex items-center gap-2 max-w-sm">
                   <input
                     type="email"
                     placeholder="輸入 Email 訂閱日報"
