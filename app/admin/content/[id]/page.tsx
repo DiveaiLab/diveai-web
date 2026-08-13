@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import ContentEditor from "../ContentEditor";
 
 type PageProps = {
@@ -10,7 +10,7 @@ export default async function EditContentPage({ params }: PageProps) {
   const { id } = await params;
 
   if (id === "new") {
-    notFound();
+    redirect("/admin/content");
   }
 
   return (
