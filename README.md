@@ -23,6 +23,8 @@ CMS_AUTH_BYPASS=true
 npm run dev
 ```
 
+`next.config.ts` calls `initOpenNextCloudflareForDev()` so API routes can read D1/R2 bindings through `getCloudflareContext()` while using `next dev`.
+
 Open:
 
 ```text
