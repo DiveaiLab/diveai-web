@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import ContentEditor from "../ContentEditor";
 
 type PageProps = {
@@ -7,6 +8,10 @@ type PageProps = {
 
 export default async function EditContentPage({ params }: PageProps) {
   const { id } = await params;
+
+  if (id === "new") {
+    notFound();
+  }
 
   return (
     <main className="flex max-w-7xl flex-col gap-6">
