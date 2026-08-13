@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 type ContentForm = {
   contentType: string;
@@ -21,6 +21,8 @@ type ContentForm = {
   tags: string;
 };
 
+const PREVIEW_STORAGE_KEY = "diveai.contentPreview";
+
 const emptyForm: ContentForm = {
   contentType: "ai_explainer_article",
   title: "",
@@ -39,22 +41,6 @@ const emptyForm: ContentForm = {
   tags: "",
 };
 
-function markdownToPreview(markdown: string): string {
-  const escaped = markdown
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-
-  return escaped
-    .replace(/^### (.*)$/gm, "<h3>$1</h3>")
-    .replace(/^## (.*)$/gm, "<h2>$1</h2>")
-    .replace(/^# (.*)$/gm, "<h1>$1</h1>")
-    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-    .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" />')
-    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
-    .replace(/\n\n/g, "</p><p>");
-}
-
 type Props = {
   id?: string;
 };
@@ -65,10 +51,16 @@ export default function ContentEditor({ id }: Props) {
   const [loading, setLoading] = useState(Boolean(id));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const previewHtml = useMemo(
-    () => `<p>${markdownToPreview(form.bodyMarkdown)}</p>`,
-    [form.bodyMarkdown],
-  );
+  const isManualSlug = form.slugStrategy === "manual";
+  const slugContentType = form.contentType || "ai_explainer_article";
+  const slugExample =
+    form.slugStrategy === "sequence"
+      ? `${slugContentType}-0001`
+      : `${slugContentType}-1786608000000`;
+  const slugAutoPlaceholder =
+    form.slugStrategy === "sequence"
+      ? "將依發佈時序號自動生成，請參考下方範例"
+      : "將依發佈時時間自動生成，請參考下方範例";
 
   useEffect(() => {
     if (!id) {
@@ -110,6 +102,18 @@ export default function ContentEditor({ id }: Props) {
     setForm((current) => ({ ...current, [key]: value }));
   }
 
+  function openPreview() {
+    window.localStorage.setItem(
+      PREVIEW_STORAGE_KEY,
+      JSON.stringify({
+        ...form,
+        slugPreview: isManualSlug ? form.slug : slugExample,
+        updatedAt: new Date().toISOString(),
+      }),
+    );
+    window.open("/admin/content/preview", "_blank", "noopener,noreferrer");
+  }
+
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSaving(true);
@@ -121,6 +125,7 @@ export default function ContentEditor({ id }: Props) {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           ...form,
+          slug: isManualSlug || id ? form.slug : "",
           tags: form.tags
             .split(",")
             .map((tag) => tag.trim())
@@ -174,7 +179,7 @@ export default function ContentEditor({ id }: Props) {
   }
 
   return (
-    <form onSubmit={save} className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+    <form onSubmit={save} className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
       <div className="flex flex-col gap-5">
         {error ? (
           <div className="rounded-md border border-[#F8C0A0] bg-white p-4 text-sm text-[#0E0E2C]">
@@ -182,8 +187,37 @@ export default function ContentEditor({ id }: Props) {
           </div>
         ) : null}
 
-        <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5 md:grid-cols-2">
-          <label className="flex flex-col gap-2 md:col-span-2">
+        <section className="rounded-lg border border-[#ECF1F4] bg-white p-5">
+          <label className="flex flex-col gap-2">
+            <span className="text-sm font-bold">Markdown 內文</span>
+            <textarea
+              value={form.bodyMarkdown}
+              onChange={(event) => updateField("bodyMarkdown", event.target.value)}
+              className="min-h-[720px] rounded-md border border-[#ECF1F4] p-4 font-mono text-sm leading-6 outline-none focus:border-[#6FC1CC]"
+            />
+          </label>
+          <label className="mt-4 inline-flex h-10 cursor-pointer items-center rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F]">
+            插入內文圖片
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+
+                if (file) {
+                  void uploadImage(file, "body");
+                }
+              }}
+            />
+          </label>
+        </section>
+      </div>
+
+      <aside className="flex flex-col gap-5">
+        <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
+          <h2 className="text-base font-bold">文章設定</h2>
+          <label className="flex flex-col gap-2">
             <span className="text-sm font-bold">標題</span>
             <input
               value={form.title}
@@ -193,27 +227,12 @@ export default function ContentEditor({ id }: Props) {
             />
           </label>
           <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">Slug</span>
-            <input
-              value={form.slug}
-              onChange={(event) => updateField("slug", event.target.value)}
-              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-              placeholder="可留空由策略產生"
+            <span className="text-sm font-bold">摘要</span>
+            <textarea
+              value={form.excerpt}
+              onChange={(event) => updateField("excerpt", event.target.value)}
+              className="min-h-24 rounded-md border border-[#ECF1F4] p-3 outline-none focus:border-[#6FC1CC]"
             />
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">Slug 策略</span>
-            <select
-              value={form.slugStrategy}
-              onChange={(event) =>
-                updateField("slugStrategy", event.target.value as ContentForm["slugStrategy"])
-              }
-              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-            >
-              <option value="timestamp">timestamp</option>
-              <option value="sequence">序號</option>
-              <option value="manual">手動</option>
-            </select>
           </label>
           <label className="flex flex-col gap-2">
             <span className="text-sm font-bold">主題 tags</span>
@@ -239,6 +258,41 @@ export default function ContentEditor({ id }: Props) {
               <option value="published">已發布</option>
             </select>
           </label>
+        </section>
+
+        <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
+          <h2 className="text-base font-bold">網址設定</h2>
+          <label className="flex flex-col gap-2">
+            <span className="text-sm font-bold">Slug</span>
+            <input
+              value={isManualSlug ? form.slug : ""}
+              onChange={(event) => updateField("slug", event.target.value)}
+              disabled={!isManualSlug}
+              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC] disabled:bg-[#ECF1F4] disabled:text-[#8C8CA1]"
+              placeholder={isManualSlug ? "輸入自訂 slug" : slugAutoPlaceholder}
+            />
+            {!isManualSlug ? (
+              <span className="text-xs text-[#8C8CA1]">範例：{slugExample}</span>
+            ) : null}
+          </label>
+          <label className="flex flex-col gap-2">
+            <span className="text-sm font-bold">Slug 自動生成設定</span>
+            <select
+              value={form.slugStrategy}
+              onChange={(event) =>
+                updateField("slugStrategy", event.target.value as ContentForm["slugStrategy"])
+              }
+              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+            >
+              <option value="timestamp">timestamp</option>
+              <option value="sequence">序號</option>
+              <option value="manual">手動</option>
+            </select>
+          </label>
+        </section>
+
+        <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
+          <h2 className="text-base font-bold">發布資訊</h2>
           <label className="flex flex-col gap-2">
             <span className="text-sm font-bold">完稿日期</span>
             <input
@@ -282,44 +336,8 @@ export default function ContentEditor({ id }: Props) {
               className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
             />
           </label>
-          <label className="flex flex-col gap-2 md:col-span-2">
-            <span className="text-sm font-bold">摘要</span>
-            <textarea
-              value={form.excerpt}
-              onChange={(event) => updateField("excerpt", event.target.value)}
-              className="min-h-24 rounded-md border border-[#ECF1F4] p-3 outline-none focus:border-[#6FC1CC]"
-            />
-          </label>
         </section>
 
-        <section className="rounded-lg border border-[#ECF1F4] bg-white p-5">
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">Markdown 內文</span>
-            <textarea
-              value={form.bodyMarkdown}
-              onChange={(event) => updateField("bodyMarkdown", event.target.value)}
-              className="min-h-[520px] rounded-md border border-[#ECF1F4] p-4 font-mono text-sm leading-6 outline-none focus:border-[#6FC1CC]"
-            />
-          </label>
-          <label className="mt-4 inline-flex h-10 cursor-pointer items-center rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F]">
-            插入內文圖片
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-
-                if (file) {
-                  void uploadImage(file, "body");
-                }
-              }}
-            />
-          </label>
-        </section>
-      </div>
-
-      <aside className="flex flex-col gap-5">
         <section className="rounded-lg border border-[#ECF1F4] bg-white p-5">
           <h2 className="text-base font-bold">封面圖</h2>
           {form.coverImageKey ? (
@@ -359,21 +377,22 @@ export default function ContentEditor({ id }: Props) {
           </label>
         </section>
 
-        <section className="rounded-lg border border-[#ECF1F4] bg-white p-5">
-          <h2 className="text-base font-bold">預覽</h2>
-          <article
-            className="prose-preview mt-4 text-sm leading-7 text-[#0E0E2C]"
-            dangerouslySetInnerHTML={{ __html: previewHtml }}
-          />
-        </section>
-
-        <button
-          type="submit"
-          disabled={saving}
-          className="h-12 rounded-md bg-[#0E0E2C] px-5 text-sm font-bold text-white transition hover:bg-[#32738F] disabled:opacity-60"
-        >
-          {saving ? "儲存中" : "儲存"}
-        </button>
+        <div className="grid gap-3">
+          <button
+            type="button"
+            onClick={openPreview}
+            className="h-11 rounded-md border border-[#32738F] px-5 text-sm font-bold text-[#32738F] transition hover:bg-[#ECF1F4]"
+          >
+            Preview
+          </button>
+          <button
+            type="submit"
+            disabled={saving}
+            className="h-12 rounded-md bg-[#0E0E2C] px-5 text-sm font-bold text-white transition hover:bg-[#32738F] disabled:opacity-60"
+          >
+            {saving ? "儲存中" : "儲存"}
+          </button>
+        </div>
       </aside>
     </form>
   );
