@@ -104,7 +104,7 @@ export default function AdminContentPage() {
     <main className="flex max-w-6xl flex-col gap-6">
       <header className="flex flex-col justify-between gap-4 border-b border-[#ECF1F4] pb-5 md:flex-row md:items-end">
         <div>
-          <p className="text-sm font-bold text-[#32738F]">內容管理</p>
+          <p className="text-sm font-bold text-[#32738F]">科普文章管理</p>
           <h1 className="mt-2 text-3xl font-extrabold">AI 科普文章</h1>
         </div>
         <button

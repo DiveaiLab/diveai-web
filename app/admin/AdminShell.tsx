@@ -6,8 +6,8 @@ import type { ReactNode } from "react";
 
 const navItems = [
   { href: "/admin", label: "首頁", exact: true },
-  { href: "/admin/content", label: "內容管理" },
-  { href: "/admin/users", label: "後台使用者" },
+  { href: "/admin/content", label: "科普文章管理" },
+  { href: "/admin/users", label: "使用者管理" },
 ];
 
 type AdminShellProps = {
@@ -23,7 +23,7 @@ export default function AdminShell({ children }: AdminShellProps) {
         <aside className="border-b border-[#ECF1F4] bg-white px-5 py-5 lg:border-b-0 lg:border-r">
           <Link href="/admin" className="block">
             <span className="block text-sm font-bold text-[#32738F]">DiveAI Admin</span>
-            <span className="mt-1 block text-xl font-extrabold">後台管理</span>
+            <span className="mt-1 block text-xl font-extrabold">呆一布網站後台</span>
           </Link>
           <nav className="mt-5 flex gap-2 overflow-x-auto lg:flex-col">
             {navItems.map((item) => {

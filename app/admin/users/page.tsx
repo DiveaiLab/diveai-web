@@ -89,8 +89,8 @@ export default function AdminUsersPage() {
   return (
     <main className="flex max-w-5xl flex-col gap-6">
       <header className="border-b border-[#ECF1F4] pb-5">
-        <p className="text-sm font-bold text-[#32738F]">權限管理</p>
-        <h1 className="mt-2 text-3xl font-extrabold">後台使用者</h1>
+        <p className="text-sm font-bold text-[#32738F]">使用者管理</p>
+        <h1 className="mt-2 text-3xl font-extrabold">使用者管理</h1>
       </header>
 
       {error ? (
