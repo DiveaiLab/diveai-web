@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   getRequiredContentFields,
@@ -303,30 +304,39 @@ export default function ContentEditor({ id }: Props) {
   }
 
   if (loading) {
-    return <p className="text-sm text-[#8C8CA1]">載入中</p>;
+    return (
+      <main className="flex max-w-7xl flex-col gap-5">
+        <p className="text-sm text-[#8C8CA1]">載入中</p>
+      </main>
+    );
   }
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-3 rounded-lg border border-[#ECF1F4] bg-white p-4 md:flex-row md:items-center md:justify-between">
+    <main className="flex max-w-7xl flex-col gap-5">
+      <header className="flex flex-col justify-between gap-4 border-b border-[#ECF1F4] pb-5 lg:flex-row lg:items-end">
         <div>
-          <p className="text-xs font-bold text-[#32738F]">自動儲存</p>
+          <Link href="/admin/content" className="text-sm font-bold text-[#32738F]">
+            AI 科普文章
+          </Link>
+          <h1 className="mt-2 text-3xl font-extrabold">編輯文章</h1>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <span
-            className={`mt-1 block text-sm font-bold ${
+            className={`text-sm font-bold ${
               saveState === "error" ? "text-[#0E0E2C]" : "text-[#8C8CA1]"
             }`}
           >
             {saveMessage}
           </span>
+          <button
+            type="button"
+            onClick={openPreview}
+            className="h-11 rounded-md border border-[#32738F] px-5 text-sm font-bold text-[#32738F] transition hover:bg-[#ECF1F4]"
+          >
+            Preview
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={openPreview}
-          className="h-11 rounded-md border border-[#32738F] px-5 text-sm font-bold text-[#32738F] transition hover:bg-[#ECF1F4]"
-        >
-          Preview
-        </button>
-      </div>
+      </header>
 
       {error ? (
         <div className="rounded-md border border-[#F8C0A0] bg-white p-4 text-sm text-[#0E0E2C]">
@@ -337,7 +347,6 @@ export default function ContentEditor({ id }: Props) {
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="grid min-w-0 gap-5">
           <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
-            <h2 className="text-base font-bold">文章內容</h2>
             <label className="flex flex-col gap-2">
               <span className="text-sm font-bold">標題</span>
               <input
@@ -347,42 +356,6 @@ export default function ContentEditor({ id }: Props) {
                 required={isRequired("title")}
               />
             </label>
-            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_240px]">
-              <label className="flex flex-col gap-2">
-                <span className="text-sm font-bold">摘要</span>
-                <textarea
-                  value={form.excerpt}
-                  onChange={(event) => updateField("excerpt", event.target.value)}
-                  className="min-h-24 rounded-md border border-[#ECF1F4] p-3 outline-none focus:border-[#6FC1CC]"
-                  required={isRequired("excerpt")}
-                />
-              </label>
-              <div className="grid gap-4">
-                <label className="flex flex-col gap-2">
-                  <span className="text-sm font-bold">主題 tags</span>
-                  <input
-                    value={form.tags}
-                    onChange={(event) => updateField("tags", event.target.value)}
-                    className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-                    placeholder="AI, 生成式 AI"
-                    required={isRequired("tags")}
-                  />
-                </label>
-                <label className="flex flex-col gap-2">
-                  <span className="text-sm font-bold">狀態</span>
-                  <select
-                    value={form.status}
-                    onChange={(event) => updateStatus(event.target.value as ContentForm["status"])}
-                    className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-                  >
-                    <option value="draft">草稿</option>
-                    <option value="ready">完稿</option>
-                    <option value="confirmed">已確認</option>
-                    <option value="published">已發布</option>
-                  </select>
-                </label>
-              </div>
-            </div>
           </section>
 
           <section className="rounded-lg border border-[#ECF1F4] bg-white p-5">
@@ -407,13 +380,49 @@ export default function ContentEditor({ id }: Props) {
             <textarea
               value={form.bodyMarkdown}
               onChange={(event) => updateField("bodyMarkdown", event.target.value)}
-              className="mt-4 h-[calc(100vh-500px)] min-h-[420px] w-full resize-y rounded-md border border-[#ECF1F4] p-4 font-mono text-sm leading-6 outline-none focus:border-[#6FC1CC] xl:h-[calc(100vh-430px)]"
+              className="mt-4 h-[calc(100vh-380px)] min-h-[520px] w-full resize-y rounded-md border border-[#ECF1F4] p-4 font-mono text-sm leading-6 outline-none focus:border-[#6FC1CC] xl:h-[calc(100vh-330px)]"
               required={isRequired("bodyMarkdown")}
             />
           </section>
         </div>
 
         <aside className="grid gap-5 xl:sticky xl:top-6 xl:max-h-[calc(100vh-48px)] xl:overflow-y-auto xl:pr-1">
+          <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
+            <h2 className="text-base font-bold">文章設定</h2>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-bold">摘要</span>
+              <textarea
+                value={form.excerpt}
+                onChange={(event) => updateField("excerpt", event.target.value)}
+                className="min-h-24 rounded-md border border-[#ECF1F4] p-3 outline-none focus:border-[#6FC1CC]"
+                required={isRequired("excerpt")}
+              />
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-bold">主題 tags</span>
+              <input
+                value={form.tags}
+                onChange={(event) => updateField("tags", event.target.value)}
+                className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+                placeholder="AI, 生成式 AI"
+                required={isRequired("tags")}
+              />
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-bold">狀態</span>
+              <select
+                value={form.status}
+                onChange={(event) => updateStatus(event.target.value as ContentForm["status"])}
+                className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+              >
+                <option value="draft">草稿</option>
+                <option value="ready">完稿</option>
+                <option value="confirmed">已確認</option>
+                <option value="published">已發布</option>
+              </select>
+            </label>
+          </section>
+
           <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
             <h2 className="text-base font-bold">網址設定</h2>
             <label className="flex flex-col gap-2">
@@ -542,6 +551,6 @@ export default function ContentEditor({ id }: Props) {
           </section>
         </aside>
       </div>
-    </div>
+    </main>
   );
 }
