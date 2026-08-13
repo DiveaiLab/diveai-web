@@ -7,14 +7,14 @@
     "d1_databases": [
       {
         "binding": "DB",
-        "database_name": "diveai-web",
-        "database_id": "TODO_REPLACE_WITH_D1_DATABASE_ID"
+        "database_name": "web-prod",
+        "database_id": "63a8d276-a484-4151-95b6-815a001b0b70"
       }
     ],
     "r2_buckets": [
       {
         "binding": "CONTENT_ASSETS",
-        "bucket_name": "diveai-content-assets"
+        "bucket_name": "web-assets-prod"
       }
     ],
     "vars": {
