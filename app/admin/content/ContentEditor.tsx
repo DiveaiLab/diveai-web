@@ -2,6 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import {
+  getRequiredContentFields,
+  type ContentRequiredField,
+} from "@/lib/content/requirements";
 
 type ContentForm = {
   contentType: string;
@@ -61,6 +65,8 @@ export default function ContentEditor({ id }: Props) {
     form.slugStrategy === "sequence"
       ? "將依發佈時序號自動生成，請參考下方範例"
       : "將依發佈時時間自動生成，請參考下方範例";
+  const requiredFields = new Set(getRequiredContentFields(form.status, form.slugStrategy));
+  const isRequired = (field: ContentRequiredField) => requiredFields.has(field);
 
   useEffect(() => {
     if (!id) {
@@ -194,6 +200,7 @@ export default function ContentEditor({ id }: Props) {
               value={form.bodyMarkdown}
               onChange={(event) => updateField("bodyMarkdown", event.target.value)}
               className="min-h-[720px] rounded-md border border-[#ECF1F4] p-4 font-mono text-sm leading-6 outline-none focus:border-[#6FC1CC]"
+              required={isRequired("bodyMarkdown")}
             />
           </label>
           <label className="mt-4 inline-flex h-10 cursor-pointer items-center rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F]">
@@ -233,7 +240,7 @@ export default function ContentEditor({ id }: Props) {
               value={form.title}
               onChange={(event) => updateField("title", event.target.value)}
               className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-              required
+              required={isRequired("title")}
             />
           </label>
           <label className="flex flex-col gap-2">
@@ -242,6 +249,7 @@ export default function ContentEditor({ id }: Props) {
               value={form.excerpt}
               onChange={(event) => updateField("excerpt", event.target.value)}
               className="min-h-24 rounded-md border border-[#ECF1F4] p-3 outline-none focus:border-[#6FC1CC]"
+              required={isRequired("excerpt")}
             />
           </label>
           <label className="flex flex-col gap-2">
@@ -251,6 +259,7 @@ export default function ContentEditor({ id }: Props) {
               onChange={(event) => updateField("tags", event.target.value)}
               className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
               placeholder="AI, 生成式 AI"
+              required={isRequired("tags")}
             />
           </label>
           <label className="flex flex-col gap-2">
@@ -280,6 +289,7 @@ export default function ContentEditor({ id }: Props) {
               disabled={!isManualSlug}
               className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC] disabled:bg-[#ECF1F4] disabled:text-[#8C8CA1]"
               placeholder={isManualSlug ? "輸入自訂 slug" : slugAutoPlaceholder}
+              required={isRequired("slug")}
             />
             {!isManualSlug ? (
               <span className="text-xs text-[#8C8CA1]">範例：{slugExample}</span>
@@ -310,6 +320,7 @@ export default function ContentEditor({ id }: Props) {
               value={form.finishedAt}
               onChange={(event) => updateField("finishedAt", event.target.value)}
               className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+              required={isRequired("finishedAt")}
             />
           </label>
           <label className="flex flex-col gap-2">
@@ -319,6 +330,7 @@ export default function ContentEditor({ id }: Props) {
               value={form.reviewedAt}
               onChange={(event) => updateField("reviewedAt", event.target.value)}
               className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+              required={isRequired("reviewedAt")}
             />
           </label>
           <label className="flex flex-col gap-2">
@@ -328,6 +340,7 @@ export default function ContentEditor({ id }: Props) {
               value={form.publishedAt}
               onChange={(event) => updateField("publishedAt", event.target.value)}
               className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+              required={isRequired("publishedAt")}
             />
           </label>
           <label className="flex flex-col gap-2">
@@ -336,6 +349,7 @@ export default function ContentEditor({ id }: Props) {
               value={form.author}
               onChange={(event) => updateField("author", event.target.value)}
               className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+              required={isRequired("author")}
             />
           </label>
           <label className="flex flex-col gap-2">
@@ -344,6 +358,7 @@ export default function ContentEditor({ id }: Props) {
               value={form.reviewer}
               onChange={(event) => updateField("reviewer", event.target.value)}
               className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+              required={isRequired("reviewer")}
             />
           </label>
         </section>

@@ -1,9 +1,15 @@
 import { createId, isoNow, normalizeString } from "@/lib/admin/http";
+import {
+  CONTENT_REQUIRED_FIELD_LABELS,
+  getRequiredContentFields,
+  type ContentRequiredField,
+  type ContentStatus,
+  type SlugStrategy,
+} from "@/lib/content/requirements";
 
 export const AI_EXPLAINER_CONTENT_TYPE = "ai_explainer_article";
 
-export type ContentStatus = "draft" | "ready" | "confirmed" | "published";
-export type SlugStrategy = "timestamp" | "sequence" | "manual";
+export type { ContentStatus, SlugStrategy } from "@/lib/content/requirements";
 
 export type ContentRow = {
   id: string;
@@ -141,18 +147,16 @@ export function buildContentInput(payload: Record<string, unknown>): ContentInpu
 }
 
 export function validateContentInput(input: ContentInput): string | null {
-  if (!input.title) {
-    return "Title is required";
-  }
-
   if (!input.contentType) {
     return "Content type is required";
   }
 
-  if (input.status === "published") {
-    if (!input.author || !input.bodyMarkdown || !input.reviewedAt || !input.publishedAt) {
-      return "Published content requires author, body, reviewed date, and published date";
-    }
+  const missingField = getRequiredContentFields(input.status, input.slugStrategy).find((field) =>
+    isMissingRequiredContentField(input, field),
+  );
+
+  if (missingField) {
+    return `${CONTENT_REQUIRED_FIELD_LABELS[missingField]} is required`;
   }
 
   try {
@@ -162,6 +166,17 @@ export function validateContentInput(input: ContentInput): string | null {
   }
 
   return null;
+}
+
+function isMissingRequiredContentField(
+  input: ContentInput,
+  field: ContentRequiredField,
+): boolean {
+  if (field === "tags") {
+    return input.tags.length === 0;
+  }
+
+  return !input[field];
 }
 
 export async function replaceContentTags(

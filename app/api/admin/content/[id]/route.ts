@@ -4,6 +4,7 @@ import { isoNow, jsonError } from "@/lib/admin/http";
 import { getEnv } from "@/lib/cloudflare/env";
 import {
   buildContentInput,
+  generateSlug,
   replaceContentTags,
   validateContentInput,
   type ContentRow,
@@ -61,11 +62,12 @@ export async function PATCH(request: Request, context: RouteContext) {
     return jsonError(validationError);
   }
 
-  if (!input.slug) {
+  const env = getEnv();
+  const slug = input.slug || (await generateSlug(env.DB, input.contentType, input.slugStrategy));
+
+  if (!slug) {
     return jsonError("Slug is required");
   }
-
-  const env = getEnv();
 
   try {
     await env.DB.prepare(
@@ -79,7 +81,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       .bind(
         input.contentType,
         input.title,
-        input.slug,
+        slug,
         input.slugStrategy,
         input.status,
         input.finishedAt || null,
