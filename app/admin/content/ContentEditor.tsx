@@ -307,230 +307,241 @@ export default function ContentEditor({ id }: Props) {
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
-      <div className="flex flex-col gap-5">
-        {error ? (
-          <div className="rounded-md border border-[#F8C0A0] bg-white p-4 text-sm text-[#0E0E2C]">
-            {error}
-          </div>
-        ) : null}
-
-        <section className="rounded-lg border border-[#ECF1F4] bg-white p-5">
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">Markdown 內文</span>
-            <textarea
-              value={form.bodyMarkdown}
-              onChange={(event) => updateField("bodyMarkdown", event.target.value)}
-              className="min-h-[720px] rounded-md border border-[#ECF1F4] p-4 font-mono text-sm leading-6 outline-none focus:border-[#6FC1CC]"
-              required={isRequired("bodyMarkdown")}
-            />
-          </label>
-          <label className="mt-4 inline-flex h-10 cursor-pointer items-center rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F]">
-            插入內文圖片
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-
-                if (file) {
-                  void uploadImage(file, "body");
-                }
-              }}
-            />
-          </label>
-        </section>
-      </div>
-
-      <aside className="flex flex-col gap-5">
-        <div className="flex items-center justify-between gap-3">
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-3 rounded-lg border border-[#ECF1F4] bg-white p-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="text-xs font-bold text-[#32738F]">自動儲存</p>
           <span
-            className={`text-sm font-bold ${
+            className={`mt-1 block text-sm font-bold ${
               saveState === "error" ? "text-[#0E0E2C]" : "text-[#8C8CA1]"
             }`}
           >
             {saveMessage}
           </span>
-          <button
-            type="button"
-            onClick={openPreview}
-            className="h-11 rounded-md border border-[#32738F] px-5 text-sm font-bold text-[#32738F] transition hover:bg-[#ECF1F4]"
-          >
-            Preview
-          </button>
+        </div>
+        <button
+          type="button"
+          onClick={openPreview}
+          className="h-11 rounded-md border border-[#32738F] px-5 text-sm font-bold text-[#32738F] transition hover:bg-[#ECF1F4]"
+        >
+          Preview
+        </button>
+      </div>
+
+      {error ? (
+        <div className="rounded-md border border-[#F8C0A0] bg-white p-4 text-sm text-[#0E0E2C]">
+          {error}
+        </div>
+      ) : null}
+
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid min-w-0 gap-5">
+          <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
+            <h2 className="text-base font-bold">文章內容</h2>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-bold">標題</span>
+              <input
+                value={form.title}
+                onChange={(event) => updateField("title", event.target.value)}
+                className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+                required={isRequired("title")}
+              />
+            </label>
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_240px]">
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-bold">摘要</span>
+                <textarea
+                  value={form.excerpt}
+                  onChange={(event) => updateField("excerpt", event.target.value)}
+                  className="min-h-24 rounded-md border border-[#ECF1F4] p-3 outline-none focus:border-[#6FC1CC]"
+                  required={isRequired("excerpt")}
+                />
+              </label>
+              <div className="grid gap-4">
+                <label className="flex flex-col gap-2">
+                  <span className="text-sm font-bold">主題 tags</span>
+                  <input
+                    value={form.tags}
+                    onChange={(event) => updateField("tags", event.target.value)}
+                    className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+                    placeholder="AI, 生成式 AI"
+                    required={isRequired("tags")}
+                  />
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="text-sm font-bold">狀態</span>
+                  <select
+                    value={form.status}
+                    onChange={(event) => updateStatus(event.target.value as ContentForm["status"])}
+                    className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+                  >
+                    <option value="draft">草稿</option>
+                    <option value="ready">完稿</option>
+                    <option value="confirmed">已確認</option>
+                    <option value="published">已發布</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-lg border border-[#ECF1F4] bg-white p-5">
+            <div className="flex flex-col gap-3 border-b border-[#ECF1F4] pb-4 md:flex-row md:items-center md:justify-between">
+              <h2 className="text-base font-bold">Markdown 內文</h2>
+              <label className="inline-flex h-10 cursor-pointer items-center rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F]">
+                插入內文圖片
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+
+                    if (file) {
+                      void uploadImage(file, "body");
+                    }
+                  }}
+                />
+              </label>
+            </div>
+            <textarea
+              value={form.bodyMarkdown}
+              onChange={(event) => updateField("bodyMarkdown", event.target.value)}
+              className="mt-4 h-[calc(100vh-500px)] min-h-[420px] w-full resize-y rounded-md border border-[#ECF1F4] p-4 font-mono text-sm leading-6 outline-none focus:border-[#6FC1CC] xl:h-[calc(100vh-430px)]"
+              required={isRequired("bodyMarkdown")}
+            />
+          </section>
         </div>
 
-        <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
-          <h2 className="text-base font-bold">文章設定</h2>
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">標題</span>
-            <input
-              value={form.title}
-              onChange={(event) => updateField("title", event.target.value)}
-              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-              required={isRequired("title")}
-            />
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">摘要</span>
-            <textarea
-              value={form.excerpt}
-              onChange={(event) => updateField("excerpt", event.target.value)}
-              className="min-h-24 rounded-md border border-[#ECF1F4] p-3 outline-none focus:border-[#6FC1CC]"
-              required={isRequired("excerpt")}
-            />
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">主題 tags</span>
-            <input
-              value={form.tags}
-              onChange={(event) => updateField("tags", event.target.value)}
-              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-              placeholder="AI, 生成式 AI"
-              required={isRequired("tags")}
-            />
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">狀態</span>
-            <select
-              value={form.status}
-              onChange={(event) => updateStatus(event.target.value as ContentForm["status"])}
-              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-            >
-              <option value="draft">草稿</option>
-              <option value="ready">完稿</option>
-              <option value="confirmed">已確認</option>
-              <option value="published">已發布</option>
-            </select>
-          </label>
-        </section>
-
-        <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
-          <h2 className="text-base font-bold">網址設定</h2>
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">Slug</span>
-            <input
-              value={form.slug}
-              onChange={(event) => updateField("slug", event.target.value)}
-              disabled={!isManualSlug}
-              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC] disabled:bg-[#ECF1F4] disabled:text-[#8C8CA1]"
-              placeholder={isManualSlug ? "輸入自訂 slug" : slugAutoPlaceholder}
-              required={isRequired("slug")}
-            />
-            {!isManualSlug ? (
-              <span className="text-xs text-[#8C8CA1]">
-                {form.slug ? `目前 slug：${form.slug}` : `範例：${slugExample}`}
-              </span>
-            ) : null}
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">Slug 自動生成設定</span>
-            <select
-              value={form.slugStrategy}
-              onChange={(event) =>
-                updateField("slugStrategy", event.target.value as ContentForm["slugStrategy"])
-              }
-              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-            >
-              <option value="timestamp">timestamp</option>
-              <option value="sequence">序號</option>
-              <option value="manual">手動</option>
-            </select>
-          </label>
-        </section>
-
-        <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
-          <h2 className="text-base font-bold">發布資訊</h2>
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">完稿日期</span>
-            <input
-              type="date"
-              value={form.finishedAt}
-              onChange={(event) => updateField("finishedAt", event.target.value)}
-              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-              required={isRequired("finishedAt")}
-            />
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">確認日期</span>
-            <input
-              type="date"
-              value={form.reviewedAt}
-              onChange={(event) => updateField("reviewedAt", event.target.value)}
-              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-              required={isRequired("reviewedAt")}
-            />
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">發布日期</span>
-            <input
-              type="date"
-              value={form.publishedAt}
-              onChange={(event) => updateField("publishedAt", event.target.value)}
-              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-              required={isRequired("publishedAt")}
-            />
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">作者</span>
-            <input
-              value={form.author}
-              onChange={(event) => updateField("author", event.target.value)}
-              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-              required={isRequired("author")}
-            />
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-bold">確認者</span>
-            <input
-              value={form.reviewer}
-              onChange={(event) => updateField("reviewer", event.target.value)}
-              className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-              required={isRequired("reviewer")}
-            />
-          </label>
-        </section>
-
-        <section className="rounded-lg border border-[#ECF1F4] bg-white p-5">
-          <h2 className="text-base font-bold">封面圖</h2>
-          {form.coverImageKey ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={`/api/admin/assets/${form.coverImageKey}`}
-              alt={form.coverImageAlt || "cover"}
-              className="mt-4 aspect-[16/9] w-full rounded-md border border-[#ECF1F4] object-cover"
-            />
-          ) : (
-            <div className="mt-4 flex aspect-[16/9] items-center justify-center rounded-md border border-dashed border-[#8C8CA1] text-sm text-[#8C8CA1]">
-              尚未上傳
-            </div>
-          )}
-          <label className="mt-4 inline-flex h-10 cursor-pointer items-center rounded-md bg-[#32738F] px-4 text-sm font-bold text-white">
-            上傳封面
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-
-                if (file) {
-                  void uploadImage(file, "cover");
+        <aside className="grid gap-5 xl:sticky xl:top-6 xl:max-h-[calc(100vh-48px)] xl:overflow-y-auto xl:pr-1">
+          <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
+            <h2 className="text-base font-bold">網址設定</h2>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-bold">Slug</span>
+              <input
+                value={form.slug}
+                onChange={(event) => updateField("slug", event.target.value)}
+                disabled={!isManualSlug}
+                className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC] disabled:bg-[#ECF1F4] disabled:text-[#8C8CA1]"
+                placeholder={isManualSlug ? "輸入自訂 slug" : slugAutoPlaceholder}
+                required={isRequired("slug")}
+              />
+              {!isManualSlug ? (
+                <span className="text-xs text-[#8C8CA1]">
+                  {form.slug ? `目前 slug：${form.slug}` : `範例：${slugExample}`}
+                </span>
+              ) : null}
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-bold">Slug 自動生成設定</span>
+              <select
+                value={form.slugStrategy}
+                onChange={(event) =>
+                  updateField("slugStrategy", event.target.value as ContentForm["slugStrategy"])
                 }
-              }}
-            />
-          </label>
-          <label className="mt-4 flex flex-col gap-2">
-            <span className="text-sm font-bold">封面 alt</span>
-            <input
-              value={form.coverImageAlt}
-              onChange={(event) => updateField("coverImageAlt", event.target.value)}
-              className="h-10 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
-            />
-          </label>
-        </section>
-      </aside>
+                className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+              >
+                <option value="timestamp">timestamp</option>
+                <option value="sequence">序號</option>
+                <option value="manual">手動</option>
+              </select>
+            </label>
+          </section>
+
+          <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
+            <h2 className="text-base font-bold">發布資訊</h2>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-bold">完稿日期</span>
+                <input
+                  type="date"
+                  value={form.finishedAt}
+                  onChange={(event) => updateField("finishedAt", event.target.value)}
+                  className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+                  required={isRequired("finishedAt")}
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-bold">確認日期</span>
+                <input
+                  type="date"
+                  value={form.reviewedAt}
+                  onChange={(event) => updateField("reviewedAt", event.target.value)}
+                  className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+                  required={isRequired("reviewedAt")}
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-bold">發布日期</span>
+                <input
+                  type="date"
+                  value={form.publishedAt}
+                  onChange={(event) => updateField("publishedAt", event.target.value)}
+                  className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+                  required={isRequired("publishedAt")}
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-bold">作者</span>
+                <input
+                  value={form.author}
+                  onChange={(event) => updateField("author", event.target.value)}
+                  className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+                  required={isRequired("author")}
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-bold">確認者</span>
+                <input
+                  value={form.reviewer}
+                  onChange={(event) => updateField("reviewer", event.target.value)}
+                  className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+                  required={isRequired("reviewer")}
+                />
+              </label>
+            </div>
+          </section>
+
+          <section className="rounded-lg border border-[#ECF1F4] bg-white p-5">
+            <h2 className="text-base font-bold">封面圖</h2>
+            {form.coverImageKey ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={`/api/admin/assets/${form.coverImageKey}`}
+                alt={form.coverImageAlt || "cover"}
+                className="mt-4 aspect-[16/9] w-full rounded-md border border-[#ECF1F4] object-cover"
+              />
+            ) : (
+              <div className="mt-4 flex aspect-[16/9] items-center justify-center rounded-md border border-dashed border-[#8C8CA1] text-sm text-[#8C8CA1]">
+                尚未上傳
+              </div>
+            )}
+            <label className="mt-4 inline-flex h-10 cursor-pointer items-center rounded-md bg-[#32738F] px-4 text-sm font-bold text-white">
+              上傳封面
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+
+                  if (file) {
+                    void uploadImage(file, "cover");
+                  }
+                }}
+              />
+            </label>
+            <label className="mt-4 flex flex-col gap-2">
+              <span className="text-sm font-bold">封面 alt</span>
+              <input
+                value={form.coverImageAlt}
+                onChange={(event) => updateField("coverImageAlt", event.target.value)}
+                className="h-10 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+              />
+            </label>
+          </section>
+        </aside>
+      </div>
     </div>
   );
 }
