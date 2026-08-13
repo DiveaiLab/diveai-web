@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   getRequiredContentFields,
   type ContentRequiredField,
@@ -25,7 +24,10 @@ type ContentForm = {
   tags: string;
 };
 
+type SaveState = "idle" | "dirty" | "saving" | "saved" | "error";
+
 const PREVIEW_STORAGE_KEY = "diveai.contentPreview";
+const AUTOSAVE_DELAY_MS = 1000;
 
 const emptyForm: ContentForm = {
   contentType: "ai_explainer_article",
@@ -45,16 +47,54 @@ const emptyForm: ContentForm = {
   tags: "",
 };
 
-type Props = {
-  id?: string;
+const FIELD_LABELS: Record<ContentRequiredField, string> = {
+  title: "標題",
+  slug: "Slug",
+  excerpt: "摘要",
+  tags: "主題 tags",
+  bodyMarkdown: "Markdown 內文",
+  finishedAt: "完稿日期",
+  author: "作者",
+  reviewedAt: "確認日期",
+  reviewer: "確認者",
+  publishedAt: "發布日期",
 };
 
+type Props = {
+  id: string;
+};
+
+function getTags(value: string) {
+  return value
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+}
+
+function buildSavePayload(form: ContentForm) {
+  return {
+    ...form,
+    slug: form.slug,
+    tags: getTags(form.tags),
+  };
+}
+
+function isMissingField(form: ContentForm, field: ContentRequiredField) {
+  if (field === "tags") {
+    return getTags(form.tags).length === 0;
+  }
+
+  return !form[field];
+}
+
 export default function ContentEditor({ id }: Props) {
-  const router = useRouter();
   const [form, setForm] = useState<ContentForm>(emptyForm);
-  const [loading, setLoading] = useState(Boolean(id));
-  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saveState, setSaveState] = useState<SaveState>("idle");
   const [error, setError] = useState("");
+  const [lastSavedAt, setLastSavedAt] = useState("");
+  const lastSavedPayload = useRef("");
+  const saveVersion = useRef(0);
   const isManualSlug = form.slugStrategy === "manual";
   const slugContentType = form.contentType || "ai_explainer_article";
   const slugExample =
@@ -63,16 +103,42 @@ export default function ContentEditor({ id }: Props) {
       : `${slugContentType}-1786608000000`;
   const slugAutoPlaceholder =
     form.slugStrategy === "sequence"
-      ? "將依發佈時序號自動生成，請參考下方範例"
-      : "將依發佈時時間自動生成，請參考下方範例";
-  const requiredFields = new Set(getRequiredContentFields(form.status, form.slugStrategy));
+      ? "切到完稿後將依發佈時序號自動生成"
+      : "切到完稿後將依發佈時時間自動生成";
+  const requiredFields = useMemo(
+    () => new Set(getRequiredContentFields(form.status, form.slugStrategy)),
+    [form.slugStrategy, form.status],
+  );
   const isRequired = (field: ContentRequiredField) => requiredFields.has(field);
-
-  useEffect(() => {
-    if (!id) {
-      return;
+  const saveMessage = useMemo(() => {
+    if (loading) {
+      return "載入中";
     }
 
+    if (saveState === "saving") {
+      return "自動儲存中";
+    }
+
+    if (saveState === "dirty") {
+      return "尚未儲存";
+    }
+
+    if (saveState === "error") {
+      return "儲存失敗";
+    }
+
+    if (lastSavedAt) {
+      return `已儲存 ${new Date(lastSavedAt).toLocaleTimeString("zh-TW", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })}`;
+    }
+
+    return "已儲存";
+  }, [lastSavedAt, loading, saveState]);
+
+  useEffect(() => {
     fetch(`/api/admin/content/${id}`)
       .then(async (response) => {
         const data = await response.json();
@@ -82,11 +148,11 @@ export default function ContentEditor({ id }: Props) {
         }
 
         const item = data.item;
-        setForm({
+        const nextForm = {
           contentType: item.content_type || "ai_explainer_article",
           title: item.title || "",
           slug: item.slug || "",
-          slugStrategy: item.slug_strategy || "manual",
+          slugStrategy: item.slug_strategy || "timestamp",
           status: item.status || "draft",
           finishedAt: item.finished_at || "",
           reviewedAt: item.reviewed_at || "",
@@ -98,14 +164,102 @@ export default function ContentEditor({ id }: Props) {
           coverImageKey: item.cover_image_key || "",
           coverImageAlt: item.cover_image_alt || "",
           tags: item.tags || "",
-        });
+        } satisfies ContentForm;
+
+        setForm(nextForm);
+        lastSavedPayload.current = JSON.stringify(buildSavePayload(nextForm));
+        setLastSavedAt(item.updated_at || "");
+        setSaveState("saved");
       })
-      .catch((caught: Error) => setError(caught.message))
+      .catch((caught: Error) => {
+        setError(caught.message);
+        setSaveState("error");
+      })
       .finally(() => setLoading(false));
   }, [id]);
 
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+
+    const payload = JSON.stringify(buildSavePayload(form));
+
+    if (payload === lastSavedPayload.current) {
+      return;
+    }
+
+    setSaveState("dirty");
+    const currentVersion = saveVersion.current + 1;
+    saveVersion.current = currentVersion;
+
+    const timeout = window.setTimeout(() => {
+      setSaveState("saving");
+      setError("");
+
+      fetch(`/api/admin/content/${id}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: payload,
+      })
+        .then(async (response) => {
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Unable to save content");
+          }
+
+          if (saveVersion.current !== currentVersion) {
+            return;
+          }
+
+          const savedForm = data.slug ? { ...form, slug: data.slug } : form;
+          lastSavedPayload.current = JSON.stringify(buildSavePayload(savedForm));
+
+          if (data.slug && data.slug !== form.slug) {
+            setForm(savedForm);
+          }
+
+          setLastSavedAt(new Date().toISOString());
+          setSaveState("saved");
+        })
+        .catch((caught) => {
+          if (saveVersion.current !== currentVersion) {
+            return;
+          }
+
+          setError(caught instanceof Error ? caught.message : "Unable to save content");
+          setSaveState("error");
+        });
+    }, AUTOSAVE_DELAY_MS);
+
+    return () => window.clearTimeout(timeout);
+  }, [form, id, loading]);
+
   function updateField<Key extends keyof ContentForm>(key: Key, value: ContentForm[Key]) {
     setForm((current) => ({ ...current, [key]: value }));
+  }
+
+  function updateStatus(status: ContentForm["status"]) {
+    const nextForm = { ...form, status };
+    const missingFields = getRequiredContentFields(status, nextForm.slugStrategy).filter(
+      (field) => {
+        if (field === "slug" && nextForm.slugStrategy !== "manual") {
+          return false;
+        }
+
+        return isMissingField(nextForm, field);
+      },
+    );
+
+    if (missingFields.length > 0) {
+      setError(`請先補齊：${missingFields.map((field) => FIELD_LABELS[field]).join("、")}`);
+      setSaveState("error");
+      return;
+    }
+
+    setError("");
+    updateField("status", status);
   }
 
   function openPreview() {
@@ -113,44 +267,11 @@ export default function ContentEditor({ id }: Props) {
       PREVIEW_STORAGE_KEY,
       JSON.stringify({
         ...form,
-        slugPreview: isManualSlug ? form.slug : slugExample,
+        slugPreview: form.slug || (!isManualSlug ? slugExample : ""),
         updatedAt: new Date().toISOString(),
       }),
     );
     window.open("/admin/content/preview", "_blank", "noopener,noreferrer");
-  }
-
-  async function save(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSaving(true);
-    setError("");
-
-    try {
-      const response = await fetch(id ? `/api/admin/content/${id}` : "/api/admin/content", {
-        method: id ? "PATCH" : "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          slug: isManualSlug || id ? form.slug : "",
-          tags: form.tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter(Boolean),
-        }),
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Unable to save content");
-      }
-
-      router.push(id ? "/admin/content" : `/admin/content/${data.id}`);
-      router.refresh();
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Unable to save content");
-    } finally {
-      setSaving(false);
-    }
   }
 
   async function uploadImage(file: File, mode: "cover" | "body") {
@@ -166,6 +287,7 @@ export default function ContentEditor({ id }: Props) {
 
     if (!response.ok) {
       setError(result.error || "Unable to upload image");
+      setSaveState("error");
       return;
     }
 
@@ -174,10 +296,10 @@ export default function ContentEditor({ id }: Props) {
       return;
     }
 
-    updateField(
-      "bodyMarkdown",
-      `${form.bodyMarkdown}\n\n![${file.name}](${result.asset.url})`,
-    );
+    setForm((current) => ({
+      ...current,
+      bodyMarkdown: `${current.bodyMarkdown}\n\n![${file.name}](${result.asset.url})`,
+    }));
   }
 
   if (loading) {
@@ -185,7 +307,7 @@ export default function ContentEditor({ id }: Props) {
   }
 
   return (
-    <form onSubmit={save} className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
       <div className="flex flex-col gap-5">
         {error ? (
           <div className="rounded-md border border-[#F8C0A0] bg-white p-4 text-sm text-[#0E0E2C]">
@@ -222,7 +344,14 @@ export default function ContentEditor({ id }: Props) {
       </div>
 
       <aside className="flex flex-col gap-5">
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between gap-3">
+          <span
+            className={`text-sm font-bold ${
+              saveState === "error" ? "text-[#0E0E2C]" : "text-[#8C8CA1]"
+            }`}
+          >
+            {saveMessage}
+          </span>
           <button
             type="button"
             onClick={openPreview}
@@ -266,9 +395,7 @@ export default function ContentEditor({ id }: Props) {
             <span className="text-sm font-bold">狀態</span>
             <select
               value={form.status}
-              onChange={(event) =>
-                updateField("status", event.target.value as ContentForm["status"])
-              }
+              onChange={(event) => updateStatus(event.target.value as ContentForm["status"])}
               className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
             >
               <option value="draft">草稿</option>
@@ -284,7 +411,7 @@ export default function ContentEditor({ id }: Props) {
           <label className="flex flex-col gap-2">
             <span className="text-sm font-bold">Slug</span>
             <input
-              value={isManualSlug ? form.slug : ""}
+              value={form.slug}
               onChange={(event) => updateField("slug", event.target.value)}
               disabled={!isManualSlug}
               className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC] disabled:bg-[#ECF1F4] disabled:text-[#8C8CA1]"
@@ -292,7 +419,9 @@ export default function ContentEditor({ id }: Props) {
               required={isRequired("slug")}
             />
             {!isManualSlug ? (
-              <span className="text-xs text-[#8C8CA1]">範例：{slugExample}</span>
+              <span className="text-xs text-[#8C8CA1]">
+                {form.slug ? `目前 slug：${form.slug}` : `範例：${slugExample}`}
+              </span>
             ) : null}
           </label>
           <label className="flex flex-col gap-2">
@@ -401,17 +530,7 @@ export default function ContentEditor({ id }: Props) {
             />
           </label>
         </section>
-
-        <div className="grid gap-3">
-          <button
-            type="submit"
-            disabled={saving}
-            className="h-12 rounded-md bg-[#0E0E2C] px-5 text-sm font-bold text-white transition hover:bg-[#32738F] disabled:opacity-60"
-          >
-            {saving ? "儲存中" : "儲存"}
-          </button>
-        </div>
       </aside>
-    </form>
+    </div>
   );
 }

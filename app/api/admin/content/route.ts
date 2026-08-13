@@ -49,20 +49,20 @@ export async function POST(request: Request) {
 
   const payload = (await request.json()) as Record<string, unknown>;
   const input = buildContentInput(payload);
+  const env = getEnv();
+  const contentType = input.contentType || AI_EXPLAINER_CONTENT_TYPE;
+
+  if (input.status !== "draft" && !input.slug && input.slugStrategy !== "manual") {
+    input.slug = await generateSlug(env.DB, contentType, input.slugStrategy);
+  }
+
   const validationError = validateContentInput(input);
 
   if (validationError) {
     return jsonError(validationError);
   }
 
-  const env = getEnv();
-  const contentType = input.contentType || AI_EXPLAINER_CONTENT_TYPE;
-  const slug = await generateSlug(env.DB, contentType, input.slugStrategy, input.slug);
-
-  if (!slug) {
-    return jsonError("Slug is required");
-  }
-
+  const slug = input.slug || null;
   const id = createId("content");
   const now = isoNow();
 

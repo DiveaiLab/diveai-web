@@ -56,18 +56,19 @@ export async function PATCH(request: Request, context: RouteContext) {
   const { id } = await context.params;
   const payload = (await request.json()) as Record<string, unknown>;
   const input = buildContentInput(payload);
+  const env = getEnv();
+
+  if (input.status !== "draft" && !input.slug && input.slugStrategy !== "manual") {
+    input.slug = await generateSlug(env.DB, input.contentType, input.slugStrategy);
+  }
+
   const validationError = validateContentInput(input);
 
   if (validationError) {
     return jsonError(validationError);
   }
 
-  const env = getEnv();
-  const slug = input.slug || (await generateSlug(env.DB, input.contentType, input.slugStrategy));
-
-  if (!slug) {
-    return jsonError("Slug is required");
-  }
+  const slug = input.slug || null;
 
   try {
     await env.DB.prepare(
@@ -111,7 +112,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     return jsonError(message, 500);
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, slug });
 }
 
 export async function DELETE(request: Request, context: RouteContext) {

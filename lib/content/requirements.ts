@@ -32,7 +32,10 @@ export function getRequiredContentFields(
 ): ContentRequiredField[] {
   const fields: ContentRequiredField[] = ["title"];
 
-  if (slugStrategy === "manual") {
+  if (
+    status !== "draft" &&
+    (slugStrategy === "timestamp" || slugStrategy === "sequence" || slugStrategy === "manual")
+  ) {
     fields.push("slug");
   }
 

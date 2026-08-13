@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 type ContentItem = {
   id: string;
   title: string;
-  slug: string;
+  slug: string | null;
   status: string;
   author: string;
   updated_at: string;
@@ -44,7 +44,7 @@ export default function AdminContentPage() {
           href="/admin/content/new"
           className="inline-flex h-11 items-center justify-center rounded-md bg-[#32738F] px-5 text-sm font-bold text-white transition hover:bg-[#0E0E2C]"
         >
-          新增文章
+          建立草稿
         </Link>
       </header>
 
@@ -75,7 +75,7 @@ export default function AdminContentPage() {
               <span>
                 <strong className="block font-bold">{item.title}</strong>
                 <span className="mt-1 block text-xs text-[#8C8CA1]">
-                  {item.slug}
+                  {item.slug || "尚未建立 slug"}
                   {item.tags ? ` · ${item.tags}` : ""}
                 </span>
               </span>

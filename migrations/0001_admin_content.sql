@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS content_items (
   id TEXT PRIMARY KEY NOT NULL,
   content_type TEXT NOT NULL,
   title TEXT NOT NULL,
-  slug TEXT NOT NULL,
+  slug TEXT,
   slug_strategy TEXT NOT NULL DEFAULT 'timestamp' CHECK (slug_strategy IN ('timestamp', 'sequence', 'manual')),
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'ready', 'confirmed', 'published')),
   finished_at TEXT,

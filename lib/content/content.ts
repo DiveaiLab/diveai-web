@@ -15,7 +15,7 @@ export type ContentRow = {
   id: string;
   content_type: string;
   title: string;
-  slug: string;
+  slug: string | null;
   slug_strategy: SlugStrategy;
   status: ContentStatus;
   finished_at: string | null;
