@@ -5,5 +5,8 @@ export function getEnv(): CloudflareEnv {
 }
 
 export function isLocalAuthBypassEnabled(env: CloudflareEnv): boolean {
-  return env.CMS_AUTH_BYPASS === "true" && env.NODE_ENV !== "production";
+  const authBypass = env.CMS_AUTH_BYPASS ?? process.env.CMS_AUTH_BYPASS;
+  const nodeEnv = env.NODE_ENV ?? process.env.NODE_ENV;
+
+  return authBypass === "true" && nodeEnv !== "production";
 }
