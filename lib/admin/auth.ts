@@ -15,15 +15,17 @@ type AdminUserRow = {
   is_active: number;
 };
 
-export function getAccessEmail(request: Request): string | null {
-  const directEmail = request.headers.get("cf-access-authenticated-user-email");
+export function getAccessEmailFromHeaders(
+  headers: Headers,
+  env = getEnv(),
+): string | null {
+  const directEmail = headers.get("cf-access-authenticated-user-email");
 
   if (directEmail) {
     return directEmail.toLowerCase();
   }
 
-  const debugEmail = request.headers.get("x-diveai-admin-email");
-  const env = getEnv();
+  const debugEmail = headers.get("x-diveai-admin-email");
 
   if (debugEmail && isLocalAuthBypassEnabled(env)) {
     return debugEmail.toLowerCase();
@@ -36,9 +38,17 @@ export function getAccessEmail(request: Request): string | null {
   return null;
 }
 
-export async function getAdminSession(request: Request): Promise<AdminSession | null> {
+export function getAccessEmail(request: Request): string | null {
   const env = getEnv();
-  const email = getAccessEmail(request);
+
+  return getAccessEmailFromHeaders(request.headers, env);
+}
+
+export async function getAdminSessionFromHeaders(
+  headers: Headers,
+): Promise<AdminSession | null> {
+  const env = getEnv();
+  const email = getAccessEmailFromHeaders(headers, env);
 
   if (!email) {
     return null;
@@ -69,6 +79,10 @@ export async function getAdminSession(request: Request): Promise<AdminSession | 
     role: user.role,
     authBypassed: false,
   };
+}
+
+export async function getAdminSession(request: Request): Promise<AdminSession | null> {
+  return getAdminSessionFromHeaders(request.headers);
 }
 
 export async function requireAdminSession(request: Request): Promise<AdminSession | NextResponse> {
