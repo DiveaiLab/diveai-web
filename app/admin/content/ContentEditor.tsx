@@ -345,46 +345,47 @@ export default function ContentEditor({ id }: Props) {
       ) : null}
 
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="grid min-w-0 gap-5">
-          <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
-            <label className="flex flex-col gap-2">
-              <span className="text-sm font-bold">標題</span>
+        <section className="min-w-0 rounded-lg border border-[#ECF1F4] bg-white">
+          <div className="px-5 pt-5">
+            <label>
+              <span className="sr-only">標題</span>
               <input
                 value={form.title}
                 onChange={(event) => updateField("title", event.target.value)}
-                className="h-11 rounded-md border border-[#ECF1F4] px-3 outline-none focus:border-[#6FC1CC]"
+                className="w-full border-0 px-0 py-2 text-4xl font-extrabold leading-tight outline-none placeholder:text-[#8C8CA1]"
+                placeholder="新增標題"
                 required={isRequired("title")}
               />
             </label>
-          </section>
+          </div>
 
-          <section className="rounded-lg border border-[#ECF1F4] bg-white p-5">
-            <div className="flex flex-col gap-3 border-b border-[#ECF1F4] pb-4 md:flex-row md:items-center md:justify-between">
-              <h2 className="text-base font-bold">Markdown 內文</h2>
-              <label className="inline-flex h-10 cursor-pointer items-center rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F]">
-                插入內文圖片
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
+          <div className="mt-3 flex flex-col gap-3 border-y border-[#ECF1F4] px-5 py-3 md:flex-row md:items-center md:justify-between">
+            <span className="text-sm font-bold text-[#8C8CA1]">Markdown</span>
+            <label className="inline-flex h-10 cursor-pointer items-center rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F]">
+              插入內文圖片
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
 
-                    if (file) {
-                      void uploadImage(file, "body");
-                    }
-                  }}
-                />
-              </label>
-            </div>
-            <textarea
-              value={form.bodyMarkdown}
-              onChange={(event) => updateField("bodyMarkdown", event.target.value)}
-              className="mt-4 h-[calc(100vh-380px)] min-h-[520px] w-full resize-y rounded-md border border-[#ECF1F4] p-4 font-mono text-sm leading-6 outline-none focus:border-[#6FC1CC] xl:h-[calc(100vh-330px)]"
-              required={isRequired("bodyMarkdown")}
-            />
-          </section>
-        </div>
+                  if (file) {
+                    void uploadImage(file, "body");
+                  }
+                }}
+              />
+            </label>
+          </div>
+
+          <textarea
+            value={form.bodyMarkdown}
+            onChange={(event) => updateField("bodyMarkdown", event.target.value)}
+            className="h-[calc(100vh-345px)] min-h-[580px] w-full resize-y border-0 p-5 font-mono text-sm leading-6 outline-none xl:h-[calc(100vh-295px)]"
+            placeholder="開始撰寫文章內文..."
+            required={isRequired("bodyMarkdown")}
+          />
+        </section>
 
         <aside className="grid gap-5 xl:sticky xl:top-6 xl:max-h-[calc(100vh-48px)] xl:overflow-y-auto xl:pr-1">
           <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
