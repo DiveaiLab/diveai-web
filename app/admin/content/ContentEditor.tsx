@@ -215,6 +215,16 @@ export default function ContentEditor({ id }: Props) {
       </div>
 
       <aside className="flex flex-col gap-5">
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={openPreview}
+            className="h-11 rounded-md border border-[#32738F] px-5 text-sm font-bold text-[#32738F] transition hover:bg-[#ECF1F4]"
+          >
+            Preview
+          </button>
+        </div>
+
         <section className="grid gap-4 rounded-lg border border-[#ECF1F4] bg-white p-5">
           <h2 className="text-base font-bold">文章設定</h2>
           <label className="flex flex-col gap-2">
@@ -378,13 +388,6 @@ export default function ContentEditor({ id }: Props) {
         </section>
 
         <div className="grid gap-3">
-          <button
-            type="button"
-            onClick={openPreview}
-            className="h-11 rounded-md border border-[#32738F] px-5 text-sm font-bold text-[#32738F] transition hover:bg-[#ECF1F4]"
-          >
-            Preview
-          </button>
           <button
             type="submit"
             disabled={saving}
