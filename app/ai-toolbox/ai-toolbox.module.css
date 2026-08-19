@@ -1,0 +1,1257 @@
+/*
+ * AI 工具箱樣式
+ *
+ * 設計語言取自 feature/homepage 分支的 components/home/*（呆一步 AI 首頁），
+ * 包含品牌色變數、大圓角卡片、eyebrow 標籤、膠囊標籤與圓形箭頭按鈕，
+ * 讓工具箱與首頁看起來是同一個網站。
+ *
+ * 品牌色變數在首頁是定義在全站的 app/globals.css :root。本頁為避免更動
+ * 共用檔案，改為定義在自己的根容器上，值與首頁完全相同。整合階段可直接
+ * 刪掉這段、改吃全站變數。
+ */
+
+.page {
+  --brand-primary: #6fc1cc;
+  --brand-secondary: #32738f;
+  --brand-dark: #0e0e2c;
+  --brand-light: #fafcfe;
+  --brand-highlight: #f8c0a0;
+  --brand-background: #e9f6ff;
+  --brand-slate: #8c8ca1;
+  --brand-dorian: #ecf1f4;
+
+  min-height: 100svh;
+  background: var(--brand-background);
+  color: var(--brand-dark);
+  font-family: var(--font-line-seed-tw), "LINE Seed TW", sans-serif;
+}
+
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
+}
+
+/* 快捷鍵捲動：首頁的 globals.css 已全站設定 smooth，這裡為了讓工具箱單獨
+   運作時也有相同體感而重複一次，整合後可移除。 */
+:global(html) {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(html) {
+    scroll-behavior: auto;
+  }
+}
+
+/* 捲到定位時上方留白，標題不會貼齊視窗邊緣 */
+.anchor {
+  scroll-margin-top: 28px;
+}
+
+/* ---------- 導覽列 ---------- */
+
+.header {
+  position: relative;
+  z-index: 20;
+  border-bottom: 1px solid rgb(50 115 143 / 12%);
+  background: rgb(250 252 254 / 84%);
+  backdrop-filter: blur(18px);
+}
+
+.headerInner {
+  position: relative;
+  display: flex;
+  width: min(1180px, calc(100% - 40px));
+  min-height: 80px;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: block;
+  width: clamp(148px, 14vw, 184px);
+  line-height: 0;
+}
+
+.brand img {
+  width: 100%;
+  height: auto;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: clamp(24px, 3.6vw, 48px);
+}
+
+.navigation a {
+  position: relative;
+  padding: 10px 2px;
+  color: var(--brand-dark);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.navigation a::after {
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+  left: 0;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--brand-primary);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 180ms ease;
+}
+
+.navigation a:hover::after,
+.navigation a:focus-visible::after,
+.navigation a[aria-current="page"]::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.menuButton {
+  position: relative;
+  display: none;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgb(50 115 143 / 18%);
+  border-radius: 15px;
+  background: var(--brand-light);
+  cursor: pointer;
+}
+
+.lineTop,
+.lineBottom,
+.lineTopOpen,
+.lineBottomOpen {
+  position: absolute;
+  left: 12px;
+  width: 20px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--brand-dark);
+  transition: transform 180ms ease, top 180ms ease;
+}
+
+.lineTop {
+  top: 17px;
+}
+
+.lineBottom {
+  top: 25px;
+}
+
+.lineTopOpen,
+.lineBottomOpen {
+  top: 21px;
+}
+
+.lineTopOpen {
+  transform: rotate(45deg);
+}
+
+.lineBottomOpen {
+  transform: rotate(-45deg);
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: clamp(48px, 7vw, 92px) 0 clamp(56px, 8vw, 104px);
+}
+
+.heroInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(28px, 5vw, 72px);
+  align-items: center;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--brand-secondary);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.heroCopy h1 {
+  margin: 18px 0 0;
+  color: var(--brand-dark);
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.heroCopy > p {
+  max-width: 620px;
+  margin: 22px 0 0;
+  color: rgb(14 14 44 / 68%);
+  font-size: clamp(16px, 1.5vw, 19px);
+  line-height: 1.8;
+}
+
+.heroMascot {
+  width: clamp(120px, 15vw, 190px);
+  height: auto;
+}
+
+.heroActions {
+  display: flex;
+  margin-top: 34px;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.pillPrimary,
+.pillGhost {
+  display: inline-flex;
+  min-height: 54px;
+  padding: 0 26px;
+  align-items: center;
+  gap: 12px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: background 200ms ease, color 200ms ease, transform 200ms ease;
+}
+
+.pillPrimary {
+  border: 1px solid transparent;
+  background: var(--brand-dark);
+  box-shadow: 0 14px 28px rgb(14 14 44 / 16%);
+  color: var(--brand-light);
+}
+
+.pillPrimary span:last-child {
+  color: var(--brand-highlight);
+  font-size: 20px;
+}
+
+.pillPrimary:hover,
+.pillPrimary:focus-visible {
+  background: var(--brand-secondary);
+}
+
+.pillGhost {
+  border: 1px solid rgb(50 115 143 / 26%);
+  background: rgb(250 252 254 / 70%);
+  color: var(--brand-secondary);
+}
+
+.pillGhost:hover,
+.pillGhost:focus-visible {
+  background: var(--brand-light);
+  color: var(--brand-dark);
+}
+
+/* ---------- 區塊 ---------- */
+
+.panel {
+  position: relative;
+  padding: clamp(72px, 9vw, 132px) 0;
+  border-radius: clamp(36px, 5vw, 72px) clamp(36px, 5vw, 72px) 0 0;
+  background: var(--brand-light);
+}
+
+.panelAlt {
+  background: #fff3ec;
+}
+
+.container {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.sectionHeading {
+  display: grid;
+  max-width: 820px;
+  margin-bottom: clamp(40px, 6vw, 68px);
+  gap: 16px;
+}
+
+.sectionHeading h2 {
+  margin: 0;
+  color: var(--brand-dark);
+  font-size: clamp(34px, 4.2vw, 54px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.sectionHeading p {
+  max-width: 690px;
+  margin: 0;
+  color: rgb(14 14 44 / 68%);
+  font-size: clamp(16px, 1.4vw, 19px);
+  line-height: 1.75;
+}
+
+/* ---------- 情境快捷鍵 ---------- */
+
+.shortcuts {
+  display: flex;
+  margin: 0 0 clamp(40px, 5vw, 64px);
+  padding: 0;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+}
+
+.shortcut {
+  display: inline-flex;
+  padding: 11px 20px;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgb(50 115 143 / 20%);
+  border-radius: 999px;
+  background: rgb(233 246 255 / 70%);
+  color: var(--brand-secondary);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.shortcut:hover,
+.shortcut:focus-visible {
+  border-color: transparent;
+  background: var(--brand-primary);
+  color: var(--brand-dark);
+  transform: translateY(-2px);
+}
+
+.shortcutCount {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgb(250 252 254 / 78%);
+  color: var(--brand-secondary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.shortcutWish {
+  border-color: rgb(248 192 160 / 70%);
+  background: rgb(248 192 160 / 30%);
+}
+
+.shortcutWish:hover,
+.shortcutWish:focus-visible {
+  background: var(--brand-highlight);
+}
+
+/* ---------- 情境分組 ---------- */
+
+.scenarios {
+  display: grid;
+  gap: clamp(48px, 6vw, 82px);
+}
+
+.scenarioHeading {
+  display: flex;
+  margin-bottom: clamp(20px, 2.6vw, 30px);
+  padding-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid rgb(50 115 143 / 16%);
+}
+
+.scenarioHeading h3 {
+  margin: 0;
+  color: var(--brand-dark);
+  font-size: clamp(24px, 2.6vw, 32px);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.scenarioHeading p {
+  margin: 6px 0 0;
+  color: rgb(14 14 44 / 62%);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.scenarioCount {
+  color: var(--brand-secondary);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.grid {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: clamp(18px, 2.4vw, 28px);
+  list-style: none;
+}
+
+/* ---------- 工具卡 ---------- */
+
+.card {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  min-height: 330px;
+  padding: clamp(26px, 3vw, 34px);
+  flex-direction: column;
+  border: 1px solid rgb(50 115 143 / 12%);
+  border-radius: clamp(24px, 2.6vw, 34px);
+  background: var(--brand-background);
+  color: var(--brand-dark);
+  text-decoration: none;
+  transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+.cardAvailable::after {
+  position: absolute;
+  top: -26px;
+  right: -10px;
+  width: 118px;
+  height: 118px;
+  border-radius: 50%;
+  background: var(--brand-primary);
+  content: "";
+  opacity: 0.5;
+  transition: transform 220ms ease;
+}
+
+.cardSoon {
+  background: var(--brand-dorian);
+}
+
+.cardAvailable:hover,
+.cardAvailable:focus-visible {
+  border-color: rgb(50 115 143 / 30%);
+  box-shadow: 0 18px 44px rgb(50 115 143 / 12%);
+  outline: none;
+  transform: translateY(-6px);
+}
+
+.cardAvailable:hover::after,
+.cardAvailable:focus-visible::after {
+  transform: scale(1.08);
+}
+
+.cardTopline {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--brand-secondary);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.statusBadge {
+  padding: 7px 13px;
+  border: 1px solid rgb(50 115 143 / 18%);
+  border-radius: 999px;
+  background: rgb(250 252 254 / 72%);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.statusSoon {
+  border-color: rgb(140 140 161 / 34%);
+  background: rgb(250 252 254 / 60%);
+  color: var(--brand-slate);
+}
+
+.cardBody {
+  position: relative;
+  z-index: 1;
+  margin-top: clamp(30px, 4vw, 46px);
+}
+
+.cardBody h4 {
+  margin: 0;
+  color: var(--brand-dark);
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  line-height: 1.25;
+}
+
+.cardBody p {
+  margin: 14px 0 0;
+  color: rgb(14 14 44 / 70%);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.highlights {
+  display: flex;
+  margin: 20px 0 0;
+  padding: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+}
+
+.highlights li {
+  padding: 7px 12px;
+  border: 1px solid rgb(50 115 143 / 14%);
+  border-radius: 999px;
+  background: rgb(250 252 254 / 62%);
+  color: var(--brand-secondary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cardAction {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  margin-top: auto;
+  padding-top: 28px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid rgb(50 115 143 / 14%);
+  color: var(--brand-dark);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.cardActionSoon {
+  color: var(--brand-slate);
+}
+
+.arrow {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--brand-dark);
+  color: var(--brand-highlight);
+  font-size: 20px;
+  transition: background 220ms ease, transform 220ms ease;
+}
+
+.cardAvailable:hover .arrow,
+.cardAvailable:focus-visible .arrow {
+  background: var(--brand-secondary);
+  transform: rotate(8deg);
+}
+
+.arrowSoon {
+  border: 1px solid rgb(140 140 161 / 30%);
+  background: transparent;
+  color: var(--brand-slate);
+  font-size: 15px;
+}
+
+/* ---------- 步驟 ---------- */
+
+.steps {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: clamp(20px, 3vw, 34px);
+  list-style: none;
+  counter-reset: step;
+}
+
+.step {
+  padding: clamp(24px, 3vw, 32px);
+  border: 1px solid rgb(50 115 143 / 14%);
+  border-radius: clamp(22px, 2.4vw, 30px);
+  background: var(--brand-light);
+}
+
+.stepIndex {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid rgb(50 115 143 / 18%);
+  border-radius: 50%;
+  background: rgb(250 252 254 / 52%);
+  color: var(--brand-secondary);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.step h3 {
+  margin: 20px 0 0;
+  color: var(--brand-dark);
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.step p {
+  margin: 10px 0 0;
+  color: rgb(14 14 44 / 68%);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+/* ---------- 條列 ---------- */
+
+.checkList {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 14px;
+  list-style: none;
+}
+
+.checkList li {
+  display: flex;
+  padding: clamp(18px, 2.2vw, 24px);
+  align-items: flex-start;
+  gap: 14px;
+  border: 1px solid rgb(50 115 143 / 14%);
+  border-radius: 20px;
+  background: var(--brand-light);
+  color: rgb(14 14 44 / 76%);
+  font-size: clamp(15px, 1.3vw, 17px);
+  line-height: 1.7;
+}
+
+.checkMark {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--brand-primary);
+  color: var(--brand-light);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* ---------- 頁尾 CTA ---------- */
+
+.ctaPanel {
+  display: grid;
+  padding: clamp(34px, 4.4vw, 56px);
+  border-radius: clamp(28px, 3vw, 40px);
+  background: var(--brand-dark);
+  color: var(--brand-light);
+  gap: 26px;
+}
+
+.ctaPanel h2 {
+  margin: 0;
+  font-size: clamp(28px, 3.4vw, 42px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.ctaPanel p {
+  max-width: 620px;
+  margin: 0;
+  color: rgb(250 252 254 / 74%);
+  font-size: clamp(15px, 1.3vw, 17px);
+  line-height: 1.8;
+}
+
+.ctaActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.ctaPanel .pillPrimary {
+  background: var(--brand-primary);
+  box-shadow: none;
+  color: var(--brand-dark);
+}
+
+.ctaPanel .pillPrimary span:last-child {
+  color: var(--brand-dark);
+}
+
+.ctaPanel .pillPrimary:hover,
+.ctaPanel .pillPrimary:focus-visible {
+  background: var(--brand-highlight);
+}
+
+.ctaPanel .pillGhost {
+  border-color: rgb(250 252 254 / 34%);
+  background: transparent;
+  color: var(--brand-light);
+}
+
+.ctaPanel .pillGhost:hover,
+.ctaPanel .pillGhost:focus-visible {
+  background: rgb(250 252 254 / 12%);
+  color: var(--brand-light);
+}
+
+.pillDisabled {
+  display: inline-flex;
+  min-height: 54px;
+  padding: 0 26px;
+  align-items: center;
+  border: 1px dashed rgb(250 252 254 / 32%);
+  border-radius: 999px;
+  background: transparent;
+  color: rgb(250 252 254 / 56%);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: not-allowed;
+}
+
+/* ---------- 工具許願池 ---------- */
+
+.wishLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(24px, 3.4vw, 44px);
+  align-items: start;
+}
+
+.wishForm {
+  display: grid;
+  padding: clamp(26px, 3.2vw, 38px);
+  gap: 16px;
+  border: 1px solid rgb(50 115 143 / 16%);
+  border-radius: clamp(24px, 2.6vw, 34px);
+  background: var(--brand-light);
+}
+
+.wishForm h3 {
+  margin: 0;
+  color: var(--brand-dark);
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.wishForm > p {
+  margin: 0;
+  color: rgb(14 14 44 / 66%);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.wishForm label,
+.wishForm legend {
+  color: var(--brand-secondary);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.wishField {
+  display: grid;
+  gap: 9px;
+}
+
+.wishFieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.wishFieldset legend {
+  padding: 0;
+  margin-bottom: 11px;
+}
+
+/* 許願類型：三選一的膠囊按鈕 */
+.wishKinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wishKind {
+  position: relative;
+  display: inline-flex;
+  padding: 10px 17px;
+  align-items: center;
+  border: 1px solid rgb(50 115 143 / 22%);
+  border-radius: 999px;
+  background: var(--brand-background);
+  color: var(--brand-secondary);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.wishKind input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.wishKind:hover {
+  border-color: rgb(50 115 143 / 40%);
+}
+
+.wishKind:has(input:checked) {
+  border-color: transparent;
+  background: var(--brand-primary);
+  color: var(--brand-dark);
+}
+
+.wishKind:has(input:focus-visible) {
+  outline: 3px solid var(--brand-secondary);
+  outline-offset: 3px;
+}
+
+.wishHint {
+  margin: 11px 0 0;
+  color: rgb(14 14 44 / 58%);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.wishSelect,
+.wishText {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  border: 1px solid rgb(50 115 143 / 22%);
+  border-radius: 14px;
+  background: var(--brand-background);
+  color: var(--brand-dark);
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.wishSelect:focus-visible,
+.wishText:focus-visible {
+  border-color: var(--brand-secondary);
+  outline: 3px solid rgb(50 115 143 / 28%);
+  outline-offset: 2px;
+}
+
+.wishInput {
+  width: 100%;
+  min-height: 108px;
+  padding: 16px 18px;
+  border: 1px solid rgb(50 115 143 / 22%);
+  border-radius: 18px;
+  background: var(--brand-background);
+  color: var(--brand-dark);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.7;
+  resize: vertical;
+}
+
+.wishInput::placeholder {
+  color: rgb(140 140 161 / 90%);
+}
+
+.wishInput:focus-visible {
+  border-color: var(--brand-secondary);
+  outline: 3px solid rgb(50 115 143 / 28%);
+  outline-offset: 2px;
+}
+
+.wishSubmit {
+  display: inline-flex;
+  min-height: 52px;
+  padding: 0 26px;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  gap: 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--brand-dark);
+  color: var(--brand-light);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 200ms ease;
+}
+
+.wishSubmit:hover:not(:disabled),
+.wishSubmit:focus-visible:not(:disabled) {
+  background: var(--brand-secondary);
+}
+
+.wishSubmit:disabled {
+  background: var(--brand-dorian);
+  color: var(--brand-slate);
+  cursor: not-allowed;
+}
+
+.wishNote {
+  margin: 0;
+  color: rgb(14 14 44 / 52%);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.wishListWrap h3 {
+  margin: 0 0 16px;
+  color: var(--brand-dark);
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.wishList {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 12px;
+  list-style: none;
+}
+
+.wishItem {
+  display: flex;
+  padding: 18px 20px;
+  align-items: flex-start;
+  gap: 16px;
+  border: 1px solid rgb(50 115 143 / 14%);
+  border-radius: 20px;
+  background: var(--brand-light);
+}
+
+.wishVotes {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid rgb(50 115 143 / 18%);
+  border-radius: 50%;
+  background: var(--brand-background);
+  color: var(--brand-secondary);
+  font-size: 16px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.wishBody {
+  min-width: 0;
+}
+
+.wishTags {
+  display: flex;
+  margin: 0 0 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.wishTag {
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+/* 三種許願類型各給一個底色，清單上可以一眼分辨
+   （類名對應 wish-pool.tsx 的 WishKindId，用 styles[wish.kind] 取用） */
+.new-tool {
+  background: rgb(111 193 204 / 34%);
+  color: var(--brand-secondary);
+}
+
+.new-feature {
+  background: rgb(248 192 160 / 46%);
+  color: #9a5a33;
+}
+
+.improve {
+  background: var(--brand-dorian);
+  color: var(--brand-slate);
+}
+
+.wishTool {
+  padding: 4px 11px;
+  border: 1px solid rgb(50 115 143 / 20%);
+  border-radius: 999px;
+  color: var(--brand-secondary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.wishContent {
+  margin: 0;
+  color: var(--brand-dark);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.wishMeta {
+  margin: 6px 0 0;
+  color: rgb(14 14 44 / 52%);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- 返回連結 ---------- */
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--brand-secondary);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+}
+
+.backLink:hover,
+.backLink:focus-visible {
+  color: var(--brand-dark);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+/* ---------- 頁尾 ---------- */
+
+.footer {
+  background: var(--brand-light);
+}
+
+.footerContainer {
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  border-top: 1px solid rgb(50 115 143 / 16%);
+}
+
+.footerMain {
+  display: grid;
+  padding: clamp(44px, 5vw, 60px) 0 clamp(34px, 4vw, 48px);
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.8fr);
+  gap: clamp(48px, 7vw, 96px);
+  align-items: start;
+}
+
+.footerBrand {
+  display: flex;
+  max-width: 650px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footerLogo {
+  display: block;
+  width: clamp(152px, 14vw, 190px);
+  line-height: 0;
+}
+
+.footerLogo img {
+  width: 100%;
+  height: auto;
+}
+
+.footerDescription {
+  max-width: 520px;
+  margin: 16px 0 0;
+  color: rgb(14 14 44 / 66%);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.footerNav {
+  display: grid;
+  padding-top: 4px;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: clamp(28px, 4vw, 52px);
+}
+
+.footerNav h2 {
+  margin: 0 0 17px;
+  color: var(--brand-dark);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.footerNav ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 12px;
+  list-style: none;
+}
+
+.footerNav a {
+  color: rgb(14 14 44 / 66%);
+  font-size: 14px;
+  line-height: 1.5;
+  text-decoration: none;
+  text-underline-offset: 5px;
+  transition: color 160ms ease;
+}
+
+.footerNav a:hover,
+.footerNav a:focus-visible {
+  color: var(--brand-secondary);
+  text-decoration: underline;
+}
+
+.footerBottom {
+  display: flex;
+  min-height: 54px;
+  align-items: center;
+  border-top: 1px solid rgb(50 115 143 / 12%);
+}
+
+.footerBottom p {
+  margin: 0;
+  color: rgb(14 14 44 / 48%);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- 焦點樣式 ---------- */
+
+.page a:focus-visible,
+.page button:focus-visible {
+  outline: 3px solid var(--brand-secondary);
+  outline-offset: 3px;
+}
+
+/* ---------- 響應式 ---------- */
+
+@media (max-width: 900px) {
+  .footerMain,
+  .wishLayout {
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+}
+
+@media (max-width: 760px) {
+  .heroInner {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+
+  .heroMascot {
+    width: 128px;
+    order: -1;
+  }
+
+  .panel {
+    border-radius: 36px 36px 0 0;
+  }
+
+  .container,
+  .hero {
+    width: min(100% - 32px, 560px);
+  }
+
+  .footerContainer {
+    width: min(100% - 32px, 560px);
+  }
+
+  .card {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 720px) {
+  .headerInner {
+    width: min(100% - 32px, 1180px);
+    min-height: 70px;
+  }
+
+  .brand {
+    width: 142px;
+  }
+
+  .menuButton {
+    display: block;
+  }
+
+  .navigation {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 10px;
+    border: 1px solid rgb(50 115 143 / 15%);
+    border-radius: 20px;
+    background: rgb(250 252 254 / 98%);
+    box-shadow: 0 18px 50px rgb(50 115 143 / 16%);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .navigationOpen {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .navigation a {
+    padding: 14px 16px;
+    border-radius: 13px;
+  }
+
+  .navigation a:hover,
+  .navigation a:focus-visible {
+    background: var(--brand-background);
+  }
+
+  .navigation a::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card::after,
+  .arrow,
+  .navigation,
+  .navigation a::after,
+  .pillPrimary,
+  .pillGhost {
+    transition: none;
+  }
+}
