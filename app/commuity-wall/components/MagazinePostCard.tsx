@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { KIND_LABELS, getExcerpt, type WallPost } from "../lib/mock-posts";
+import { KIND_LABELS, getExcerpt, type WallPost } from "@/app/lib/wall/mock-posts";
 
 type MagazinePostCardProps = {
   post: WallPost;

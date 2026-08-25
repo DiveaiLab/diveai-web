@@ -1,18 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import WallHeader from "./components/WallHeader";
 import WallFooter from "./components/WallFooter";
 import HeroSection from "./components/HeroSection";
-import TagMarquee from "./components/TagMarquee";
+import TagSidebar from "./components/TagSidebar";
 import WallCarouselSection from "./components/WallCarouselSection";
-import TeamUpdatesSidebar from "./components/TeamUpdatesSidebar";
-import { useWallState } from "./lib/wall-state-context";
+import TeamStatusSection from "./components/TeamStatusSection";
+import { useWallState } from "@/app/lib/wall/wall-state-context";
 import {
   getPublishedPostsByKind,
   getAllPublishedTags,
   type WallPostKind,
-} from "./lib/mock-posts";
-import { mockTeamGroups } from "./lib/mock-teams";
+} from "@/app/lib/wall/mock-posts";
 
 // 顯示順序：讀書會筆記排最前面，因為目前是團隊產出最豐富的內容類型；
 // 專案與 Agent 相關內容會晚一點才累積起來。
@@ -24,42 +24,70 @@ const SECTIONS: { kind: WallPostKind; title: string; viewAllHref: string }[] = [
 ];
 
 export default function WallPageClient() {
-  const { posts, isLoggedIn, toggleLogin, hasLiked, likePost } = useWallState();
+  const { posts, teams, isLoggedIn, username, login, logout, hasLiked, likePost } =
+    useWallState();
   const publishedCount = posts.filter((post) => post.status === "published").length;
   const allTags = getAllPublishedTags(posts);
+
+  // 登入輸入框的草稿文字，跟 context 裡實際「已登入的帳號」分開管理，
+  // 這樣輸入到一半、還沒按登入之前不會影響任何已登入狀態。
+  const [usernameDraft, setUsernameDraft] = useState("");
+
+  function handleLoginSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!usernameDraft.trim()) return;
+    login(usernameDraft);
+    setUsernameDraft("");
+  }
 
   return (
     <div className="min-h-screen bg-[#FBFBFA] text-gray-800 font-sans selection:bg-blue-100 selection:text-blue-700">
       <WallHeader />
 
       <main className="pt-12 pb-16">
-        <HeroSection publishedCount={publishedCount} teamCount={mockTeamGroups.length} />
+        <HeroSection publishedCount={publishedCount} teamCount={teams.length} />
 
-        {/* Hero 下方的標籤動畫區塊：三列交錯滾動，點擊任一標籤導向
-            /commuity-wall/tag/[tagName] */}
-        <TagMarquee tags={allTags} />
-
-        {/* 假登入開關：僅用來模擬「按讚需登入」的前台狀態，非投稿相關功能。
-            只在列表頁畫一次，單篇頁共用同一個 isLoggedIn 判斷，不重複畫 UI */}
-        <section className="max-w-5xl mx-auto px-4 mb-10">
-          <label className="inline-flex items-center gap-2 text-sm text-gray-600">
-            <input
-              type="checkbox"
-              checked={isLoggedIn}
-              onChange={toggleLogin}
-              className="h-4 w-4 accent-[#2563EB]"
-            />
-            模擬已登入
-            <span className="text-gray-400">
-              {isLoggedIn ? "（目前：已登入）" : "（目前：未登入）"}
-            </span>
-          </label>
+        {/* 登入區塊：開發階段假登入，輸入帳號名稱即可「登入」，不驗證密碼，
+            僅用來模擬「按讚需登入」的前台狀態，非投稿相關功能。只在列表頁
+            畫一次，單篇頁共用同一個 isLoggedIn／username 判斷，不重複畫 UI */}
+        <section className="max-w-7xl mx-auto px-4 mb-10">
+          {isLoggedIn ? (
+            <div className="inline-flex items-center gap-3 text-sm text-gray-600">
+              <span>
+                已登入：<span className="font-semibold text-gray-900">{username}</span>
+              </span>
+              <button
+                type="button"
+                onClick={logout}
+                className="text-xs font-semibold text-[#2563EB] hover:underline"
+              >
+                登出
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleLoginSubmit} className="inline-flex items-center gap-2">
+              <input
+                type="text"
+                value={usernameDraft}
+                onChange={(e) => setUsernameDraft(e.target.value)}
+                placeholder="輸入帳號名稱"
+                className="bg-gray-100/80 border-0 rounded-xl px-4 py-2 text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#2563EB] outline-none transition-all"
+              />
+              <button
+                type="submit"
+                disabled={!usernameDraft.trim()}
+                className="bg-[#2563EB] hover:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-sm font-medium px-5 py-2 rounded-xl transition-colors"
+              >
+                登入
+              </button>
+            </form>
+          )}
         </section>
 
-        {/* Two-column layout：左欄「小組動態」（桌機 sticky，手機堆疊在上方），
-            右欄三個分類的 carousel */}
-        <div className="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[240px_1fr] gap-10">
-          <TeamUpdatesSidebar />
+        {/* Two-column layout：左欄「技術標籤」（純靜態，桌機 sticky，手機堆疊
+            在上方），右欄三個分類的 carousel（維持不變） */}
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[240px_1fr] gap-10">
+          <TagSidebar tags={allTags} />
 
           <div className="min-w-0">
             {SECTIONS.map((section) => (
@@ -74,6 +102,9 @@ export default function WallPageClient() {
             ))}
           </div>
         </div>
+
+        {/* 小組動態：從左欄移到三個分區下方，改成橫向並排的卡片列 */}
+        <TeamStatusSection />
       </main>
 
       <WallFooter />

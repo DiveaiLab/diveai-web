@@ -65,7 +65,7 @@ const SPINE_BARS = Array.from({ length: BAR_COUNT }, () => {
 
 export default function HeroSection({ publishedCount, teamCount }: HeroSectionProps) {
   return (
-    <section className="max-w-5xl mx-auto px-4 mb-10">
+    <section className="max-w-7xl mx-auto px-4 mb-10">
       <div className="pt-14 pb-0 text-center">
         <span className="text-[#2563EB] font-semibold text-xs tracking-[0.3em] uppercase block mb-3">
           C O M M U N I T Y &nbsp; W A L L

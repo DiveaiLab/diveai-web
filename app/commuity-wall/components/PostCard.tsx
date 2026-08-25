@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { KIND_LABELS, type WallPost } from "../lib/mock-posts";
+import { KIND_LABELS, type WallPost } from "@/app/lib/wall/mock-posts";
 
 type PostCardProps = {
   post: WallPost;
@@ -11,7 +11,7 @@ type PostCardProps = {
 };
 
 // FR：卡片只保留類型 chip、封面圖、標題、作者姓名與頭像、讚數與按讚按鈕。
-// startingPoint / timeSpent 只在單篇頁顯示，這裡刻意不放。
+// 完整內文只在單篇頁顯示，這裡刻意不放。
 //
 // 封面圖版面說明：圖片是「full-bleed」貼齊卡片內部邊界（不是卡片內距裡的一個
 // 元素），本身不套用 border-radius、也不留 padding／margin。卡片外層用

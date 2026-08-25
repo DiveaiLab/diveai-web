@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Comment } from "../lib/mock-posts";
+import type { Comment } from "@/app/lib/wall/mock-posts";
 
 type CommentSectionProps = {
   postId: string;

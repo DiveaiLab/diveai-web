@@ -1,11 +1,12 @@
-// 共學牆左欄「小組動態」假資料。之後可能會換成真實資料來源，
-// 目前先純展示，卡片不可點擊、不導向任何頁面。
+// 共學牆「小組動態」假資料。原本放在 app/commuity-wall/lib/ 底下，後台
+// （app/admin/wall/）要能編輯這份資料並讓前台立刻反映，所以搬到前台／後台
+// 共用的上層目錄（app/lib/wall/）。
 
 export type TeamGroup = {
   id: string;
   name: string; // 小組名稱，例如「社群組」
   currentFocus: string; // 目前在做什麼
-  stickyNote: string; // 便條紙上的一句話，例如「這次對焦目標：完成共學牆頁面」
+  stickyNote: string; // 這次對焦目標，例如「這次對焦目標：完成共學牆頁面」
 };
 
 export const mockTeamGroups: TeamGroup[] = [

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { WallStateProvider } from "./lib/wall-state-context";
 
+// WallStateProvider 已經搬到根 layout（app/layout.tsx），因為後台
+// app/admin/wall 需要跟這裡共用同一份資料狀態，這裡不用再包一次。
 export const metadata: Metadata = {
   title: "共學牆 | DiveAI - 把 AI，用在對的地方",
   description:
@@ -13,5 +14,5 @@ export default function CommunityWallLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <WallStateProvider>{children}</WallStateProvider>;
+  return <>{children}</>;
 }

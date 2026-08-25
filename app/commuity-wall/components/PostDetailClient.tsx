@@ -4,8 +4,9 @@ import Link from "next/link";
 import WallHeader from "./WallHeader";
 import WallFooter from "./WallFooter";
 import CommentSection from "./CommentSection";
-import { useWallState } from "../lib/wall-state-context";
-import { KIND_LABELS, getCommentsForPost } from "../lib/mock-posts";
+import MarkdownBody from "./MarkdownBody";
+import { useWallState } from "@/app/lib/wall/wall-state-context";
+import { KIND_LABELS, getCommentsForPost } from "@/app/lib/wall/mock-posts";
 
 type PostDetailClientProps = {
   id: string;
@@ -39,12 +40,13 @@ export default function PostDetailClient({ id }: PostDetailClientProps) {
   }
 
   const liked = hasLiked(post.id);
+  const formattedDate = post.createdAt.replace(/-/g, ".");
 
   return (
     <div className="min-h-screen bg-[#FBFBFA] text-gray-800 font-sans selection:bg-blue-100 selection:text-blue-700">
       <WallHeader />
 
-      <main className="max-w-3xl mx-auto px-4 pt-12 pb-24">
+      <main className="max-w-5xl mx-auto px-4 pt-12 pb-24">
         <Link
           href="/commuity-wall"
           className="text-[#2563EB] font-semibold text-sm hover:underline mb-8 inline-block"
@@ -75,6 +77,8 @@ export default function PostDetailClient({ id }: PostDetailClientProps) {
           <span className="text-sm text-gray-700 font-medium">
             {post.authorName}
           </span>
+          <span className="text-gray-300">·</span>
+          <span className="text-sm text-gray-400">{formattedDate}</span>
         </div>
 
         {/* 情境標籤：值域與文章共用（課業/實習/職涯/日常） */}
@@ -89,34 +93,8 @@ export default function PostDetailClient({ id }: PostDetailClientProps) {
           ))}
         </div>
 
-        <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-12">
-          {post.bodyMd}
-        </p>
-
-        {/* FR：內頁必含三段固定內容 */}
-        <div className="space-y-6 mb-12">
-          <div className="bg-white border border-gray-100/80 rounded-2xl p-8 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
-            <h2 className="text-gray-900 font-bold text-lg mb-2">
-              我原本的程度
-            </h2>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              {post.startingPoint}
-            </p>
-          </div>
-          <div className="bg-white border border-gray-100/80 rounded-2xl p-8 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
-            <h2 className="text-gray-900 font-bold text-lg mb-2">花了多久</h2>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              {post.timeSpent}
-            </p>
-          </div>
-          <div className="bg-white border border-gray-100/80 rounded-2xl p-8 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
-            <h2 className="text-gray-900 font-bold text-lg mb-2">
-              卡在哪、怎麼解決
-            </h2>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              {post.obstacle}
-            </p>
-          </div>
+        <div className="mb-12">
+          <MarkdownBody content={post.bodyMd} />
         </div>
 
         {/* 相關連結：外部連結加 target="_blank" rel="noopener noreferrer" */}

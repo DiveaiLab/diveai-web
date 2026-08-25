@@ -4,8 +4,8 @@ import Link from "next/link";
 import WallHeader from "./WallHeader";
 import WallFooter from "./WallFooter";
 import PostGrid from "./PostGrid";
-import { useWallState } from "../lib/wall-state-context";
-import { getPublishedPostsByTag } from "../lib/mock-posts";
+import { useWallState } from "@/app/lib/wall/wall-state-context";
+import { getPublishedPostsByTag } from "@/app/lib/wall/mock-posts";
 
 type TagOverviewClientProps = {
   tagName: string;

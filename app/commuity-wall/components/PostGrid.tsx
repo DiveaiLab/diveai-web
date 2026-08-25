@@ -1,5 +1,5 @@
 import PostCard from "./PostCard";
-import type { WallPost } from "../lib/mock-posts";
+import type { WallPost } from "@/app/lib/wall/mock-posts";
 
 type PostGridProps = {
   posts: WallPost[];

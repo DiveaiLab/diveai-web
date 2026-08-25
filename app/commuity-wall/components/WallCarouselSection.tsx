@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import MagazinePostCard from "./MagazinePostCard";
-import type { WallPost } from "../lib/mock-posts";
+import type { WallPost } from "@/app/lib/wall/mock-posts";
 
 // 卡片改用固定寬度（不是 CSS Grid 固定欄數），一排能放幾張由容器寬度自然
 // 決定——寬版卡片下通常是 2 張多、露出下一張的一小截，不強制塞滿 4 張。
