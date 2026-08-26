@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAuthResponse, requireAdminSession } from "@/lib/admin/auth";
 import { createId, isoNow, jsonError } from "@/lib/admin/http";
-import { getEnv } from "@/lib/cloudflare/env";
+import { getContentAssetsBucket, getEnv } from "@/lib/cloudflare/env";
 
 export const runtime = "edge";
 
@@ -38,12 +38,18 @@ export async function POST(request: Request) {
   }
 
   const env = getEnv();
+  const assetsBucket = getContentAssetsBucket(env);
+
+  if (!assetsBucket) {
+    return jsonError("Image uploads are temporarily disabled", 503);
+  }
+
   const id = createId("asset");
   const filename = sanitizeFilename(file.name);
   const r2Key = `content/${new Date().toISOString().slice(0, 10)}/${id}-${filename}`;
   const bytes = await file.arrayBuffer();
 
-  await env.CONTENT_ASSETS.put(r2Key, bytes, {
+  await assetsBucket.put(r2Key, bytes, {
     httpMetadata: {
       contentType: file.type || "application/octet-stream",
     },

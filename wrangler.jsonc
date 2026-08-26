@@ -11,12 +11,16 @@
         "database_id": "63a8d276-a484-4151-95b6-815a001b0b70"
       }
     ],
-    "r2_buckets": [
-      {
-        "binding": "CONTENT_ASSETS",
-        "bucket_name": "web-assets-prod"
-      }
-    ],
+    "vars": {
+      "CMS_CONTENT_ASSETS_ENABLED": "false"
+    },
+    // Re-enable this binding with CMS_CONTENT_ASSETS_ENABLED=true after R2 is available.
+    // "r2_buckets": [
+    //   {
+    //     "binding": "CONTENT_ASSETS",
+    //     "bucket_name": "web-assets-prod"
+    //   }
+    // ],
     "assets": {
       "directory": ".open-next/assets",
       "binding": "ASSETS"

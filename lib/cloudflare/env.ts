@@ -10,3 +10,17 @@ export function isLocalAuthBypassEnabled(env: CloudflareEnv): boolean {
 
   return authBypass === "true" && nodeEnv !== "production";
 }
+
+export function getContentAssetsBucket(env: CloudflareEnv): R2Bucket | null {
+  const assetsEnabled = env.CMS_CONTENT_ASSETS_ENABLED ?? process.env.CMS_CONTENT_ASSETS_ENABLED;
+
+  if (assetsEnabled !== "true") {
+    return null;
+  }
+
+  return env.CONTENT_ASSETS ?? null;
+}
+
+export function isContentAssetsEnabled(env: CloudflareEnv): boolean {
+  return getContentAssetsBucket(env) !== null;
+}

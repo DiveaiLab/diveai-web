@@ -35,7 +35,8 @@ interface R2Bucket {
 
 interface CloudflareEnv {
   DB: D1Database;
-  CONTENT_ASSETS: R2Bucket;
+  CONTENT_ASSETS?: R2Bucket;
   CMS_AUTH_BYPASS?: string;
+  CMS_CONTENT_ASSETS_ENABLED?: string;
   NODE_ENV?: string;
 }

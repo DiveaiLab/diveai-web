@@ -1,6 +1,6 @@
 # DiveAI Web
 
-Next.js App Router site deployed to Cloudflare with OpenNext. The admin area uses Cloudflare Access, D1, and R2.
+Next.js App Router site deployed to Cloudflare with OpenNext. The admin area uses Cloudflare Access and D1. R2-backed image uploads are prepared but can be disabled until the bucket is available.
 
 ## Setup
 
@@ -17,13 +17,19 @@ CMS_AUTH_BYPASS=true
 
 `CMS_AUTH_BYPASS` defaults to disabled when it is not set, and the bypass is ignored in production.
 
+Image uploads are disabled by default while R2 is not available:
+
+```bash
+CMS_CONTENT_ASSETS_ENABLED=false
+```
+
 ## Development
 
 ```bash
 npm run dev
 ```
 
-`next.config.ts` calls `initOpenNextCloudflareForDev()` so API routes can read D1/R2 bindings through `getCloudflareContext()` while using `next dev`.
+`next.config.ts` calls `initOpenNextCloudflareForDev()` so API routes can read Cloudflare bindings through `getCloudflareContext()` while using `next dev`.
 
 Open:
 
@@ -41,7 +47,7 @@ Configured bindings in `wrangler.jsonc`:
 | Binding | Resource |
 | --- | --- |
 | `DB` | D1 database `web-prod` |
-| `CONTENT_ASSETS` | R2 bucket `web-assets-prod` |
+| `CONTENT_ASSETS` | R2 bucket `web-assets-prod` when image uploads are enabled |
 
 Create resources when needed:
 
@@ -49,6 +55,8 @@ Create resources when needed:
 npx wrangler d1 create web-prod
 npx wrangler r2 bucket create web-assets-prod
 ```
+
+To enable image uploads later, uncomment the `r2_buckets` binding in `wrangler.jsonc` and set `CMS_CONTENT_ASSETS_ENABLED=true`.
 
 Apply D1 migrations:
 

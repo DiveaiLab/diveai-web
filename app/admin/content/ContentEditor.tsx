@@ -63,6 +63,7 @@ const FIELD_LABELS: Record<ContentRequiredField, string> = {
 
 type Props = {
   id: string;
+  assetsEnabled: boolean;
 };
 
 function getTags(value: string) {
@@ -88,7 +89,7 @@ function isMissingField(form: ContentForm, field: ContentRequiredField) {
   return !form[field];
 }
 
-export default function ContentEditor({ id }: Props) {
+export default function ContentEditor({ id, assetsEnabled }: Props) {
   const [form, setForm] = useState<ContentForm>(emptyForm);
   const [loading, setLoading] = useState(true);
   const [saveState, setSaveState] = useState<SaveState>("idle");
@@ -276,6 +277,11 @@ export default function ContentEditor({ id }: Props) {
   }
 
   async function uploadImage(file: File, mode: "cover" | "body") {
+    if (!assetsEnabled) {
+      setError("Image uploads are temporarily disabled");
+      return;
+    }
+
     const data = new FormData();
     data.set("file", file);
     setError("");
@@ -361,12 +367,19 @@ export default function ContentEditor({ id }: Props) {
 
           <div className="mt-3 flex flex-col gap-3 border-y border-[#ECF1F4] px-5 py-3 md:flex-row md:items-center md:justify-between">
             <span className="text-sm font-bold text-[#8C8CA1]">Markdown</span>
-            <label className="inline-flex h-10 cursor-pointer items-center rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F]">
+            <label
+              className={`inline-flex h-10 items-center rounded-md border px-4 text-sm font-bold ${
+                assetsEnabled
+                  ? "cursor-pointer border-[#32738F] text-[#32738F]"
+                  : "cursor-not-allowed border-[#ECF1F4] text-[#8C8CA1]"
+              }`}
+            >
               插入內文圖片
               <input
                 type="file"
                 accept="image/*"
                 className="hidden"
+                disabled={!assetsEnabled}
                 onChange={(event) => {
                   const file = event.target.files?.[0];
 
@@ -526,12 +539,19 @@ export default function ContentEditor({ id }: Props) {
                 尚未上傳
               </div>
             )}
-            <label className="mt-4 inline-flex h-10 cursor-pointer items-center rounded-md bg-[#32738F] px-4 text-sm font-bold text-white">
+            <label
+              className={`mt-4 inline-flex h-10 items-center rounded-md px-4 text-sm font-bold ${
+                assetsEnabled
+                  ? "cursor-pointer bg-[#32738F] text-white"
+                  : "cursor-not-allowed bg-[#ECF1F4] text-[#8C8CA1]"
+              }`}
+            >
               上傳封面
               <input
                 type="file"
                 accept="image/*"
                 className="hidden"
+                disabled={!assetsEnabled}
                 onChange={(event) => {
                   const file = event.target.files?.[0];
 
