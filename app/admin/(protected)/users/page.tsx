@@ -16,6 +16,10 @@ export default function AdminUsersPage() {
   const [displayName, setDisplayName] = useState("");
   const [role, setRole] = useState<"admin" | "editor">("editor");
   const [error, setError] = useState("");
+  const [temporaryPassword, setTemporaryPassword] = useState<{
+    email: string;
+    password: string;
+  } | null>(null);
 
   async function loadUsers() {
     const response = await fetch("/api/admin/users");
@@ -46,6 +50,7 @@ export default function AdminUsersPage() {
   async function addUser(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setTemporaryPassword(null);
 
     const response = await fetch("/api/admin/users", {
       method: "POST",
@@ -62,10 +67,17 @@ export default function AdminUsersPage() {
     setEmail("");
     setDisplayName("");
     setRole("editor");
+    setTemporaryPassword({
+      email: data.email || email,
+      password: data.temporaryPassword,
+    });
     await loadUsers();
   }
 
   async function updateUser(user: AdminUser, isActive: boolean) {
+    setError("");
+    setTemporaryPassword(null);
+
     const response = await fetch("/api/admin/users", {
       method: "PATCH",
       headers: { "content-type": "application/json" },
@@ -86,6 +98,47 @@ export default function AdminUsersPage() {
     await loadUsers();
   }
 
+  async function resetPassword(user: AdminUser) {
+    setError("");
+    setTemporaryPassword(null);
+
+    const response = await fetch("/api/admin/users", {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        email: user.email,
+        displayName: user.display_name || "",
+        role: user.role,
+        isActive: user.is_active === 1,
+        resetPassword: true,
+      }),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.error || "Unable to reset password");
+      return;
+    }
+
+    setTemporaryPassword({
+      email: user.email,
+      password: data.temporaryPassword,
+    });
+    await loadUsers();
+  }
+
+  async function copyTemporaryPassword() {
+    if (!temporaryPassword) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(temporaryPassword.password);
+    } catch {
+      setError("Unable to copy password");
+    }
+  }
+
   return (
     <main className="flex max-w-5xl flex-col gap-6">
       <header className="border-b border-[#ECF1F4] pb-5">
@@ -97,6 +150,27 @@ export default function AdminUsersPage() {
         <div className="rounded-md border border-[#F8C0A0] bg-white p-4 text-sm">
           {error}
         </div>
+      ) : null}
+
+      {temporaryPassword ? (
+        <section className="rounded-lg border border-[#6FC1CC] bg-white p-5">
+          <p className="text-sm font-bold text-[#32738F]">臨時密碼（只顯示一次）</p>
+          <div className="mt-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm text-[#8C8CA1]">{temporaryPassword.email}</p>
+              <code className="mt-1 block rounded-md bg-[#ECF1F4] px-3 py-2 text-lg font-bold text-[#0E0E2C]">
+                {temporaryPassword.password}
+              </code>
+            </div>
+            <button
+              type="button"
+              onClick={() => void copyTemporaryPassword()}
+              className="h-10 rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F] transition hover:bg-[#ECF1F4]"
+            >
+              複製
+            </button>
+          </div>
+        </section>
       ) : null}
 
       <form
@@ -134,7 +208,7 @@ export default function AdminUsersPage() {
         {users.map((user) => (
           <div
             key={user.email}
-            className="grid gap-3 border-b border-[#ECF1F4] px-4 py-4 text-sm last:border-b-0 md:grid-cols-[1fr_140px_120px_auto]"
+            className="grid gap-3 border-b border-[#ECF1F4] px-4 py-4 text-sm last:border-b-0 md:grid-cols-[1fr_120px_110px_auto]"
           >
             <span>
               <strong className="block">{user.display_name || user.email}</strong>
@@ -142,12 +216,22 @@ export default function AdminUsersPage() {
             </span>
             <span>{user.role}</span>
             <span>{user.is_active ? "active" : "inactive"}</span>
-            <button
-              onClick={() => void updateUser(user, user.is_active !== 1)}
-              className="h-9 rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F]"
-            >
-              {user.is_active ? "停用" : "啟用"}
-            </button>
+            <div className="flex flex-wrap gap-2 md:justify-end">
+              <button
+                type="button"
+                onClick={() => void resetPassword(user)}
+                className="h-9 rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F]"
+              >
+                重設密碼
+              </button>
+              <button
+                type="button"
+                onClick={() => void updateUser(user, user.is_active !== 1)}
+                className="h-9 rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F]"
+              >
+                {user.is_active ? "停用" : "啟用"}
+              </button>
+            </div>
           </div>
         ))}
       </section>

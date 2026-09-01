@@ -24,7 +24,7 @@ export default function AdminHomePage() {
         >
           <h2 className="text-xl font-bold">使用者管理</h2>
           <p className="mt-2 text-sm leading-6 text-[#8C8CA1]">
-            管理通過 Cloudflare Access 後仍允許進入後台的 email。
+            管理後台帳號、角色、啟用狀態與臨時密碼。
           </p>
         </Link>
       </section>

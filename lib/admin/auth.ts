@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getEnv, isLocalAuthBypassEnabled } from "@/lib/cloudflare/env";
+import { findValidAdminSession, getSessionCookie } from "@/lib/admin/session";
 
 export type AdminSession = {
   email: string;
@@ -15,46 +16,24 @@ type AdminUserRow = {
   is_active: number;
 };
 
-export function getAccessEmailFromHeaders(
-  headers: Headers,
-  env = getEnv(),
-): string | null {
-  const directEmail = headers.get("cf-access-authenticated-user-email");
-
-  if (directEmail) {
-    return directEmail.toLowerCase();
-  }
-
+function getLocalBypassEmail(headers: Headers, env: CloudflareEnv): string {
   const debugEmail = headers.get("x-diveai-admin-email");
 
   if (debugEmail && isLocalAuthBypassEnabled(env)) {
     return debugEmail.toLowerCase();
   }
 
-  if (isLocalAuthBypassEnabled(env)) {
-    return "local-admin@diveai.local";
-  }
-
-  return null;
-}
-
-export function getAccessEmail(request: Request): string | null {
-  const env = getEnv();
-
-  return getAccessEmailFromHeaders(request.headers, env);
+  return "local-admin@diveai.local";
 }
 
 export async function getAdminSessionFromHeaders(
   headers: Headers,
 ): Promise<AdminSession | null> {
   const env = getEnv();
-  const email = getAccessEmailFromHeaders(headers, env);
-
-  if (!email) {
-    return null;
-  }
 
   if (isLocalAuthBypassEnabled(env)) {
+    const email = getLocalBypassEmail(headers, env);
+
     return {
       email,
       displayName: "Local Admin",
@@ -63,10 +42,22 @@ export async function getAdminSessionFromHeaders(
     };
   }
 
+  const sessionToken = getSessionCookie(headers);
+
+  if (!sessionToken) {
+    return null;
+  }
+
+  const session = await findValidAdminSession(env.DB, sessionToken);
+
+  if (!session) {
+    return null;
+  }
+
   const user = await env.DB.prepare(
     "SELECT email, display_name, role, is_active FROM admin_users WHERE lower(email) = lower(?) LIMIT 1",
   )
-    .bind(email)
+    .bind(session.email)
     .first<AdminUserRow>();
 
   if (!user || user.is_active !== 1) {

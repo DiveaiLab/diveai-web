@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
+import { useState } from "react";
 
 const navItems = [
   { href: "/admin", label: "首頁", exact: true },
@@ -16,6 +17,15 @@ type AdminShellProps = {
 
 export default function AdminShell({ children }: AdminShellProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  async function logout() {
+    setLoggingOut(true);
+    await fetch("/api/admin/logout", { method: "POST" });
+    router.push("/admin/login");
+    router.refresh();
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFCFE] text-[#0E0E2C]">
@@ -46,6 +56,14 @@ export default function AdminShell({ children }: AdminShellProps) {
               );
             })}
           </nav>
+          <button
+            type="button"
+            onClick={() => void logout()}
+            disabled={loggingOut}
+            className="mt-5 h-10 rounded-md border border-[#32738F] px-4 text-sm font-bold text-[#32738F] transition hover:bg-[#ECF1F4] disabled:opacity-60"
+          >
+            {loggingOut ? "登出中" : "登出"}
+          </button>
         </aside>
         <div className="min-w-0 px-6 py-8 lg:px-8">{children}</div>
       </div>

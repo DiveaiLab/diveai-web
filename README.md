@@ -1,6 +1,6 @@
 # DiveAI Web
 
-Next.js App Router site deployed to Cloudflare with OpenNext. The admin area uses Cloudflare Access and D1. R2-backed image uploads are prepared but can be disabled until the bucket is available.
+Next.js App Router site deployed to Cloudflare with OpenNext. The admin area uses app-managed email/password auth backed by D1. R2-backed image uploads are prepared but can be disabled until the bucket is available.
 
 ## Setup
 
@@ -67,12 +67,13 @@ npx wrangler d1 migrations apply web-prod --remote
 
 ## Admin Auth
 
-Production admin access has two layers:
+Production admin access uses app-managed email/password auth:
 
-1. Cloudflare Access Email OTP protects `/admin/*` and `/api/admin/*`.
-2. The app checks the Access email against the D1 `admin_users` allowlist.
+1. Admin users are stored in the D1 `admin_users` table.
+2. Password hashes are stored in D1, and login sessions are stored in `admin_sessions`.
+3. New users and password resets generate a temporary password that is shown once to the admin.
 
-Local development can bypass the app-level allowlist with `CMS_AUTH_BYPASS=true`.
+Local development and first setup can bypass admin auth with `CMS_AUTH_BYPASS=true`. After deploying this auth flow, disable any Cloudflare Access policy that still protects `/admin/*` or `/api/admin/*`, otherwise users will see Cloudflare Access before the app login page.
 
 ## Checks
 
