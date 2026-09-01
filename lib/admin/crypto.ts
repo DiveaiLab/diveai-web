@@ -35,10 +35,8 @@ function randomBytes(length: number): Uint8Array {
   return bytes;
 }
 
-function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
-  const buffer = new ArrayBuffer(bytes.length);
-  new Uint8Array(buffer).set(bytes);
-  return buffer;
+function asBufferSource(bytes: Uint8Array): BufferSource {
+  return bytes as unknown as BufferSource;
 }
 
 async function derivePasswordHash(
@@ -48,7 +46,7 @@ async function derivePasswordHash(
 ): Promise<Uint8Array> {
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
-    toArrayBuffer(new TextEncoder().encode(password)),
+    asBufferSource(new TextEncoder().encode(password)),
     "PBKDF2",
     false,
     ["deriveBits"],
@@ -57,7 +55,7 @@ async function derivePasswordHash(
     {
       name: "PBKDF2",
       hash: "SHA-256",
-      salt: toArrayBuffer(salt),
+      salt: asBufferSource(salt),
       iterations,
     },
     keyMaterial,
@@ -138,7 +136,10 @@ export function generateSessionToken(): string {
 }
 
 export async function hashSessionToken(token: string): Promise<string> {
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    asBufferSource(new TextEncoder().encode(token)),
+  );
 
   return bytesToBase64Url(new Uint8Array(digest));
 }
