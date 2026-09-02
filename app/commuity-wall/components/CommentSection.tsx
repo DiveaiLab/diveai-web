@@ -10,7 +10,7 @@ type CommentSectionProps = {
 };
 
 // 開發階段假名字：目前沒有真實登入系統，新送出的留言先固定顯示這個作者名。
-// 之後接真實留言系統／Supabase Auth 時，改成讀取真實使用者的名字。
+// 之後接真實留言系統／登入驗證時，改成讀取真實使用者的名字。
 const MOCK_CURRENT_USER_NAME = "我";
 
 // 讀書會筆記（kind = 'note'）單篇頁專屬的留言／回饋區塊。

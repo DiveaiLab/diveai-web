@@ -3,7 +3,6 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { useWallState } from "@/app/lib/wall/wall-state-context";
-import { isSupabaseConfigured } from "@/app/lib/supabase/client";
 
 export default function AdminWallDashboardPage() {
   const { posts, teams, postsLoading } = useWallState();
@@ -26,17 +25,6 @@ export default function AdminWallDashboardPage() {
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-2">共學牆後台</h1>
       <p className="text-sm text-gray-500 mb-8">投稿文章、更新小組動態的管理入口。</p>
-
-      {!isSupabaseConfigured && (
-        <div className="mb-8 bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-700 leading-relaxed">
-          目前還沒設定 Supabase，文章資料先存在瀏覽器 localStorage（跟之前一樣，換瀏覽器或清快取資料會不見）。
-          設定好 <code className="bg-amber-100 rounded px-1">.env.local</code> 的
-          <code className="bg-amber-100 rounded px-1 ml-1">NEXT_PUBLIC_SUPABASE_URL</code> /
-          <code className="bg-amber-100 rounded px-1 ml-1">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>
-          （記得先到 Supabase 專案的 SQL editor 依序執行
-          <code className="bg-amber-100 rounded px-1 ml-1">supabase/migrations/</code> 底下的三個檔案）之後會自動改讀寫真的資料庫，不用改任何程式碼。
-        </div>
-      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
         <div className="bg-white border border-gray-200 rounded-xl p-5">

@@ -21,7 +21,7 @@ import {
   createImageUpload,
 } from "novel";
 import { Markdown } from "tiptap-markdown";
-import { uploadWallImage } from "@/app/lib/supabase/upload-image";
+import { uploadWallImage } from "@/app/lib/wall/upload-image";
 
 // novel@1.0.2（目前 npm 上最新的正式版本）還沒內建 Markdown 支援
 // （GitHub 上比較新的原始碼有，但還沒發新版），所以額外自己裝
@@ -44,7 +44,7 @@ const MarkdownExtension = Markdown.configure({
 // 反白選字），完全不用碰 Markdown 語法；底層用 Novel／Tiptap，掛
 // MarkdownExtension（tiptap-markdown）之後，編輯器可以直接吃 Markdown
 // 字串當初始內容，內容變動時也能直接吐出 Markdown 字串
-// （editor.storage.markdown.getMarkdown()），存進 Supabase 的 articles.body_md
+// （editor.storage.markdown.getMarkdown()），存進 D1 的 wall_articles.body_md
 // 就是這個字串，前台再用 react-markdown 轉回 HTML 顯示（見
 // app/commuity-wall/components/MarkdownBody.tsx）。
 //
@@ -102,7 +102,7 @@ const COLOR_SWATCHES = [
 ];
 
 async function uploadFn(file: File): Promise<string> {
-  return uploadWallImage(file, "content");
+  return uploadWallImage(file);
 }
 
 const imageUpload = createImageUpload({
@@ -160,7 +160,7 @@ function Toolbar({ editor }: { editor: EditorInstance | null }) {
     if (!file || !editor) return;
     setUploading(true);
     try {
-      const src = await uploadWallImage(file, "content");
+      const src = await uploadWallImage(file);
       editor.chain().focus().setImage({ src }).run();
     } catch (err) {
       window.alert(err instanceof Error ? err.message : "圖片上傳失敗");

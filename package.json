@@ -10,7 +10,6 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.112.4",
     "next": "^16.3.0",
     "novel": "^1.0.2",
     "react": "19.2.4",

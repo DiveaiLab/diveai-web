@@ -32,7 +32,7 @@ export default function PostCard({
           圖片本身沒有 rounded／padding／margin，直角、滿版貼齊卡片邊界。 */}
       {post.coverUrl ? (
         // 使用一般 img 而非 next/image：封面圖來源是 mock 用的外部圖床，
-        // 之後接上 Supabase Storage 的真實圖檔網址時，再評估要不要換成 next/image。
+        // 之後接上 R2 的真實圖檔網址時，再評估要不要換成 next/image。
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={post.coverUrl}

@@ -32,7 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
-!.env.local.example
+
+# wrangler 本機開發狀態（本地模擬的 D1／R2 資料），不用進版控
+.wrangler/
 
 # vercel
 .vercel

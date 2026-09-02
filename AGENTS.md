@@ -1,9 +1,13 @@
 # AGENTS.md
 
 <!-- BEGIN:nextjs-agent-rules -->
+
 # This is NOT the Next.js you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
 <!-- END:nextjs-agent-rules -->
 
 > 以上區塊由 Next.js 16.2+ 的 `create-next-app` 自動生成，用途是提醒 AI agent 這個框架版本可能跟訓練資料中的舊版寫法不同，動手寫 Next.js 相關程式碼前，請先查閱 `node_modules/next/dist/docs/` 裡版本對應的官方文件。之後升級 Next.js 版本時，`next dev` 會自動維護、更新這個 block，不需要手動改動。

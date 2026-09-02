@@ -4,6 +4,24 @@
     "name": "diveai-web",
     "compatibility_date": "2026-08-05",
     "compatibility_flags": ["nodejs_compat"],
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "web-prod",
+        "database_id": "63a8d276-a484-4151-95b6-815a001b0b70"
+      }
+    ],
+    "vars": {
+      "WALL_ASSETS_ENABLED": "false"
+    },
+    // 跟 feat-cms 分支的 CONTENT_ASSETS 一樣：R2 帳號層級還沒啟用，先註解掉，
+    // 等 R2 可以用了再打開、把 WALL_ASSETS_ENABLED 改成 "true"。
+    // "r2_buckets": [
+    //   {
+    //     "binding": "WALL_ASSETS",
+    //     "bucket_name": "web-assets-prod"
+    //   }
+    // ],
     "assets": {
       "directory": ".open-next/assets",
       "binding": "ASSETS"

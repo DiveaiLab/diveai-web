@@ -1,18 +1,17 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { uploadWallImage } from "@/app/lib/supabase/upload-image";
-import { isSupabaseConfigured } from "@/app/lib/supabase/client";
+import { uploadWallImage } from "@/app/lib/wall/upload-image";
 
 type ImageUploadFieldProps = {
   value: string;
   onChange: (url: string) => void;
 };
 
-// 封面圖欄位：主要操作是「選檔案上傳」，上傳完會自動把 Supabase Storage
-// 回傳的公開網址填進 value。同時保留一個可編輯的網址欄位當作 fallback——
-// Supabase 還沒設定好時上傳會失敗（有清楚的錯誤訊息），這時候還是可以
-// 手動貼一個外部圖片網址進來，不會卡住整個表單。
+// 封面圖欄位：主要操作是「選檔案上傳」，上傳完會自動把 R2 回傳的公開網址
+// 填進 value。同時保留一個可編輯的網址欄位當作 fallback——R2 帳號層級還沒
+// 啟用之前上傳會失敗（後端回傳清楚的錯誤訊息），這時候還是可以手動貼一個
+// 外部圖片網址進來，不會卡住整個表單。
 export default function ImageUploadField({ value, onChange }: ImageUploadFieldProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -35,7 +34,7 @@ export default function ImageUploadField({ value, onChange }: ImageUploadFieldPr
     setUploading(true);
     setError(null);
     try {
-      const url = await uploadWallImage(file, "covers");
+      const url = await uploadWallImage(file);
       onChange(url);
     } catch (err) {
       setError(err instanceof Error ? err.message : "圖片上傳失敗");
@@ -72,11 +71,6 @@ export default function ImageUploadField({ value, onChange }: ImageUploadFieldPr
             className="hidden"
             onChange={handleFileChange}
           />
-          {!isSupabaseConfigured && (
-            <p className="text-[11px] text-amber-600 mt-1.5">
-              目前還沒設定 Supabase，無法真的上傳檔案，可以先在下面手動貼圖片網址。
-            </p>
-          )}
           {error && <p className="text-[11px] text-red-500 mt-1.5">{error}</p>}
         </div>
       </div>
