@@ -4,6 +4,23 @@
     "name": "diveai-web",
     "compatibility_date": "2026-08-05",
     "compatibility_flags": ["nodejs_compat"],
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "web-prod",
+        "database_id": "63a8d276-a484-4151-95b6-815a001b0b70"
+      }
+    ],
+    "vars": {
+      "CMS_CONTENT_ASSETS_ENABLED": "false"
+    },
+    // Re-enable this binding with CMS_CONTENT_ASSETS_ENABLED=true after R2 is available.
+    // "r2_buckets": [
+    //   {
+    //     "binding": "CONTENT_ASSETS",
+    //     "bucket_name": "web-assets-prod"
+    //   }
+    // ],
     "assets": {
       "directory": ".open-next/assets",
       "binding": "ASSETS"
